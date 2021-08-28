@@ -9,7 +9,7 @@ function init() {
   // WEDNESDAY:
   // 1. AI levels of guessing loaded upon difficulty level
   ////    i. random guessing
-  //    ii. advanced guessing
+  ////    ii. advanced guessing
   //    iii. search and destroy after a hit
   //        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
   //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
@@ -25,10 +25,11 @@ function init() {
   // 7. Game Ending programming (quit resets this and normal states without reloading whole page?)
   // 8. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
   // 9. Add sound effects, add music, add a mute button for effects and a mute for sound
-  
+  // 10. add coordinates around edges of computer board, confirm target selection with letter and a number
+
   // IF TIME REMAINS:
-  // 10. Commenting for intelligibility
-  // 11. Code Dryness / Refactoring
+  // X. Commenting for intelligibility
+  // Y. Code Dryness / Refactoring
   
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -75,6 +76,9 @@ function init() {
       lessNumbers.push(i-1)
     }
   }
+
+  let backUpNumbers = loadsOfNumbers.filter(num => !lessNumbers.includes(num))
+
 
   // INITIALIZE BUTTONS AS DISABLED UNTIL GAME STARTED
   rotateB.disabled = true
@@ -368,17 +372,6 @@ function init() {
   }
   } 
 
-  function parseDifficulty(){
-    if (difficultyLevel === 'hard'){
-      console.log('this does not exist yet')
-    } else if (difficultyLevel === 'medium') {
-      console.log('this does not exist yet')
-    } else {
-      console.log('computer easy guess')
-      computerGuessEasy()
-    }
-  }
-
   function rotateSelection(event){
     currentShipIndex++
     if (currentShipIndex > (playersShips.length-1)){
@@ -443,67 +436,105 @@ function init() {
   ////    i. random guessing
   //    ii. advanced guessing
   //    iii. search and destroy after a hit
-  //        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
+  //        a) hunting true/false variable b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
   //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
 
-  // need to change player and computer guessing to change targets class to hit or miss
+  // *** need to change player and computer guessing to change targets class to hit or miss ***
+  // *** need to make sure my computer guess function insertions are correct
   // then feedback and styling comes from those classes
   // so first I have to add those classes
-
-  function randomGuess(){
-
-  }
-
-  function advancedRandomGuess(){
-
-  }
+  
+  // SEARCH AND DESTROY --- THE CRUX FOR MVP AND ESSENTIALLY FOR MEDIUM AND HARD DIFFICULTIES
+  //        a) hunting true/false variable b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
+  // I need global variables outside all the functions so they can be updated and then reference again in a new loop through
+  let hunting = false
+  let guessHitLocation = '' //this will be a string (gridP + double digit number)
 
   function searchAndDestroy(){
     // need a function that tells the ai what its next guess will be
-
+    
   }
 
-  function computerGuessEasy(){
-    // changes with difficulty levels
-    let numGuess = doubleDigits(loadsOfNumbers[getRandomInt(loadsOfNumbers.length)])
-    let indexGuess = loadsOfNumbers.indexOf(Number(numGuess))
-    loadsOfNumbers.splice(indexGuess, 1)
-
-    // does not need to change between difficulty levels
-    let compGuessL = 'gridP' + numGuess
-    const guessLocC = document.getElementById(compGuessL)
-    const guessClass = guessLocC.className
-    let validHit = false
+  function computerGuess(){
+    // A FEW INITIALIZATIONS
+    let guessLoc = ''
+    let guessClass = ''
     let warning = ''
+    
+    // If the computer runs out of squares using the efficient 'advanced' guessing method, it will resort to guessing the rest of the squares
+    if (lessNumbers.length === 0){
+      console.log('computer is attacking remaining squares')
+      lessNumbers = backUpNumbers
+    } else {
+      console.log(`${lessNumbers.length} numbers left`)
+    }
 
-    if (guessLocC.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){
+    // ~~~~~~~~   MODULAR GUESS INFORMATION HERE   ~~~~~~~~
+    //easy guess
+    let numGuessEasy = doubleDigits(loadsOfNumbers[getRandomInt(loadsOfNumbers.length)])
+    let indexGuessEasy = loadsOfNumbers.indexOf(Number(numGuessEasy))
+    loadsOfNumbers.splice(indexGuessEasy, 1)
+    let compGuessLEasy = 'gridP' + numGuessEasy
+
+    //advanced INITIAL guess
+    let numGuessAdv = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+    let indexGuessAdv = lessNumbers.indexOf(Number(numGuessAdv))
+    lessNumbers.splice(indexGuessAdv, 1)
+    let compGuessLAdv = 'gridP' + numGuessAdv
+
+    // SELECTION OF INITIAL GUESS BASED ON DIFFICULTY
+    if (difficultyLevel === 'easy' || difficultyLevel === 'medium'){
+      console.log('computer is taking an easy / medium guess')
+      guessLoc = document.getElementById(compGuessLEasy)
+      guessClass = guessLoc.className
+    } else {
+        console.log('computer is taking a hard guess')
+        guessLoc = document.getElementById(compGuessLAdv)
+        guessClass = guessLoc.className
+    }
+
+    // PROCESSING THE GUESS SECTION
+
+    if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
         scoreP -= 100
-        guessLocC.style.backgroundColor = 'red'
+        guessLoc.style.backgroundColor = 'red'
         if(damagedShip.damage === damagedShip.hitPoints){
           console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
           scoreP -= 100
+          damagedShip.destroyed = true
           destroyedShipsP.push(guessClass)
           if (destroyedShipsP.length === 5){
             console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP)
             winner = 'computer'
           }
         } else {
-          if (damagedShip.damage === (damagedShip.length-1)){
+          if (damagedShip.damage === (damagedShip.lengthS-1)){
             warning = " It is critically damaged!"
-          } 
+          }
           console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
-      } else if (guessLocC.style.backgroundColor === ''){
-        console.log('They missed us Admiral!')
-        guessLocC.style.backgroundColor = 'grey'
-        validHit = true
-      }
+    } else if (guessLoc.style.backgroundColor === ''){
+      console.log('They missed us Admiral!')
+      guessLoc.style.backgroundColor = 'grey'
+    }
   }
 
+  // function parseDifficulty(){
+  //   if (difficultyLevel === 'hard'){
+  //     console.log('this does not exist yet')
+  //   } else if (difficultyLevel === 'medium') {
+  //     console.log('this does not exist yet')
+  //   } else {
+  //     console.log('computer easy guess')
+  //     computerGuessEasy()
+  //   }
+  // }
+
+  // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){}
+
   function playerGuess(event) {
-    // window.confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")
     const eT = event.target
     const guessClass = eT.className
     if (eT.style.backgroundColor != 'red' && computerClasses.includes(guessClass) ){
@@ -516,22 +547,32 @@ function init() {
         console.log(`We destroyed their ${guessClass.slice(0,-1)} Admiral! One step closer to victory!`)
         destroyedShipsC.push(guessClass)
         scoreP += 100
+        damagedShip.destroyed = true
         if (destroyedShipsC.length === 5){
           console.log(`We have destroyed their fleet! Victory is ours! Your score: ${scoreP}`)
           winner = 'player'
         } else {
-          parseDifficulty()
+          computerGuess()
+          computerGuess()
+          computerGuess()
+          computerGuess()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
-        parseDifficulty()
+        computerGuess()
+        computerGuess()
+        computerGuess()
+        computerGuess()
       }
     } else if (eT.style.backgroundColor === 'red'){
       console.log('We already hit here. Choose new coordinates Admiral...')
     } else if (eT.style.backgroundColor === ''){
       console.log('We missed Admiral!')
       eT.style.backgroundColor = 'grey'
-      parseDifficulty()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
     } else if (eT.style.backgroundColor === 'grey'){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
