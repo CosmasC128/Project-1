@@ -2,12 +2,46 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>GRID GAME!</title>
+    <title>BATTLE SHIP!</title>
     <link rel="stylesheet" href="styles/main.css">
     <script src="scripts/app.js" charset="utf-8"></script>
-    <title>Project 1</title>
   </head>
   <body>
-    <h1>Project 1</h1>
+
+    <div class="gameBar">
+      <div id="leftMenu">
+        <button id="start">Start Game</button>
+        <div id="rotationButtons">
+          <button id="rotate">Rotate Ship</button>
+          <button id="ship">Ship To Rotate</button>
+        </div>
+        <button id="end">End</button>
+      </div>
+      <div id="rightMenu">
+        <H1>Select Difficulty</H1>
+        <div id="difficulty">
+          <button id="easy">Easy</button>
+          <button id="medium">Medium</button>
+          <button id="hard">Hard</button>
+        </div>
+      </div>  
+    </div>
+
+    <div class="grid-wrapper">
+      <!-- <div id="letters">A B C D E F G H I J </div> -->
+      <div class="grid">
+        <!-- Cells to go here -->
+      </div>
+      <!-- <div id="numbers">1 2 3 4 5 6 7 8 9 10 </div> -->
+    </div>
+
+    <div class="grid-wrapper-player">
+      <!-- <div id="letters">A B C D E F G H I J </div> -->
+      <div class="gridP">
+        <!-- Cells to go here -->
+      </div>
+      <!-- <div id="numbers">1 2 3 4 5 6 7 8 9 10 </div> -->
+    </div>
+
   </body>
 </html>
