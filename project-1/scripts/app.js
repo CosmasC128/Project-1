@@ -1,27 +1,31 @@
 function init() {
 
-  // score mechanic?
-  // different levels of ai?
-  // sounds and more complex animations?
-  // multiple screens?
-
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // planning and placement phase with 'reset' button
-  // box with start button -> takes  you difficulty level selection
-  
-  // first page planning 'strategy panel' reset all placements, randomly place, quit, drag and drop ships
-  // ships can't be placed base to base, so need an extra width where you are denied.
-  // rotation button, jumps ship back to start table if you rotate them into a position they can't be
-  
-  // Music in this section or from the start(?) Sound effect on button presses
-
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  // fight phase: once player ACCEPTS strategy phase is over 'strategy button'
-  //  randomize computer ships, and place them.
-  //  enter a while loop where you can only leave by destroyed ships from one team or quit.
   // on end, show score. Score is hits scored minus enemy hits.
   // way to reset the game without browser refresh?
+
+  // NOTES FOR MYSELF
+  
+  // quit button = end -> reload to original conditions? (currently reloads  page)
+  // I need to build a game loop that ends when ships are destroyed
+  // make sure guessing stuff isn't possible before the right time
+  // add scoring on hits and remove score when hit
+  // score tracker, works with final page
+  // drag and drop in strategy phase
+  // NEXT STEPS AFTER THAT ARE, DRAGGABLE PLAYER SHIPS
+  // CREATE AI GUESSING CODE
+
+  // Current To Dos:
+  // 1. scoring
+  // 2. turn all console logs into alerts/confirms
+  // 3. reveal ships when they are destroyed for both teams 
+  // 4. AI levels of guessing loaded upon difficulty level
+  //    this is either 1) multiple guess generators 2) once a hit confirmed, next guess based off that
+  // 5. Game Ending programming (quit resets this and normal states without reloading whole page?)
+  // 6. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
+  // 7. Add sound effects, add music, add a mute button for effects and a mute for sound
+
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -568,38 +572,6 @@ function init() {
   //   }
 
   // }
-
-
-
-
-
-  // NOTES FOR MYSELF
-
-  // I have rotation selector and button
-  // I have randomized ship locations on both grids
-  // game Start should initialize ships
-  // 
-  // confirmation of strategy phase should display guess panel
-  // and start gameplay loop
-  // gameplay loop should have computer generated guesses after player confirms guess
-  // guesses should add damage, enough damage triggers destruction confirmation
-
-  // enough destroyed = gameplay loop end
-  
-  // end button = end -> reload to original conditions?
-
-  // I need to build a game loop that ends when ships are destroyed
-  // notification when a ship is destroyed
-  // add damage to ships when hit
-
-  // get phase 1 of randomized stuff, then drag and drop placement with rotation possible
-  // then phase 2 hit start and start a while loop that involves guessing + computer guesses
-  // go back and forth until every ship on one side is destroyed, or quit hit.
-  // finish touches of buttons disabled or not.
-
-// NEXT STEPS AFTER THAT ARE, DRAGGABLE PLAYER SHIPS, SELECT SHIP FOR ROTATION
-// CREATE AI GUESSING CODE AND PLAYER GUESSING CODE THAT BEGINS ON START
-// CREATE DAMAGE ETC SO THAT YOU CAN ENTER A GAME LOOP THAT SPAWNS SHIPS, CONFIRMS PLACEMENT, DESTROYS SHIPS, TRACKS SCORE, ENDS GAME
 
 }
 
