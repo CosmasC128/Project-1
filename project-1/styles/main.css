@@ -26,7 +26,7 @@ body{
   flex-direction: column;
 }
 
-#start, #rotate, #ship, #end{
+#start, #rotate, #ship, #fight, #quit{
   font-size: 30px;
   padding: 5px;
   cursor: pointer;
@@ -34,6 +34,10 @@ body{
 
 #ship {
   font-size: 20px;
+}
+
+#quit {
+  display: none;
 }
 
 h1{

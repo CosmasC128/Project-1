@@ -32,11 +32,21 @@ function init() {
   const startB = document.getElementById('start')
   const rotateB = document.getElementById('rotate')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
+  const fightB = document.getElementById('fight')
+  const quitB = document.getElementById('quit')
   const shipSelector = document.getElementById('ship')
   let difficultyLevel = ''
   const shipClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC', 'carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
+  const computerClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC']
+  const playerClasses = ['carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
+  
+  // initialize buttons as disabled unless activated by phases
+  rotateB.disabled = true
+  shipSelector.disabled = true
+  fightB.disabled = true
+  quitB.disabled = true
 
-  // ~~~~~~~~~~ Computer Ships ~~~~~~~~~~~~
+  // ~~~~~~~~~~ COMPUTER SHIPS ~~~~~~~~~~~~
   const carrierC = {
     classS: 'carrierC',
     lengthS: 5,
@@ -83,7 +93,7 @@ function init() {
     startLocation: 'grid99',
   }
 
-  // ~~~~~~~~~~ Player Ships ~~~~~~~~~~~~
+  // ~~~~~~~~~~ PLAYER SHIPS ~~~~~~~~~~~~
   const carrierP = {
     classS: 'carrierP',
     lengthS: 5,
@@ -129,11 +139,11 @@ function init() {
     orientation: 'vertical',
     startLocation: 'grid01',
   }
-
+  const allShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC, carrierP, battleshipP, destroyerP, submarineP, patrolboatP]
   const playersShips = [carrierP,battleshipP,destroyerP,submarineP,patrolboatP]
+  const computersShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC]
   let currentShipIndex = 0
   let selectedShip = destroyerP
-  const allShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC, carrierP, battleshipP, destroyerP, submarineP, patrolboatP]
 
   // ~~~~~   GRID CONSTRUCTION AND UTILIZATION START ~~~~~~
   const grid = document.querySelector('.grid')
@@ -170,7 +180,7 @@ function init() {
   
   // GRID BASED CONSTANTS
 
-  const boxA1 = document.querySelectorAll('.grid div')
+  const computerBoxes = document.querySelectorAll('.grid div')
 
   // FUNCTIONS
 
@@ -249,13 +259,13 @@ function init() {
   function validateRotation(ship, letter){
     if (ship.orientation === 'vertical'){
       let truArray = []
-      console.log(ship.classS, ship.orientation, ship.startLocation, 'from vertical validateRotation')
+      // console.log(ship.classS, ship.orientation, ship.startLocation, 'from vertical validateRotation')
       for (let i = 1; i < ship.lengthS;i++){
         if (Math.floor(parseShipL(ship, i)/10) > Math.floor(parseShipL(ship, 0)/10)){
           truArray.push(true)
           } else {
             let standInVert = document.getElementById('grid' + letter + parseShipL(ship, i)).className
-            console.log('grid' + letter + parseShipL(ship, i), document.getElementById('grid' + letter + parseShipL(ship, i)), 'middle', standInVert)
+            // console.log('grid' + letter + parseShipL(ship, i), document.getElementById('grid' + letter + parseShipL(ship, i)), 'middle', standInVert)
             if (shipClasses.includes(standInVert)){
               truArray.push(true)
             } else {
@@ -263,19 +273,19 @@ function init() {
             }
         }
       }
-      if (truArray.includes(true)){
-        console.log('cannot rotate right ' + ship.classS + ' ' +ship.startLocation)
-      }
+      // if (truArray.includes(true)){
+      //   console.log('cannot rotate right ' + ship.classS + ' ' +ship.startLocation)
+      // }
       return truArray
       } else {
       let truArray = []
-      console.log(ship.classS, ship.orientation, ship.startLocation, 'from horizontal validateRotation')
+      // console.log(ship.classS, ship.orientation, ship.startLocation, 'from horizontal validateRotation')
       for (let i = 1; i < ship.lengthS;i++){
         if (document.getElementById(`grid${letter}${parseShipL(ship, i*10)}`) === null){
             truArray.push(true)
         } else {
           let standIn = document.getElementById(`grid${letter}${parseShipL(ship, i*10)}`).className
-          console.log('grid' + letter + parseShipL(ship, i), document.getElementById('grid' + letter + parseShipL(ship, i)), standIn)
+          // console.log('grid' + letter + parseShipL(ship, i), document.getElementById('grid' + letter + parseShipL(ship, i)), standIn)
           if (shipClasses.includes(standIn)){
             truArray.push(true)
           } else {
@@ -283,9 +293,9 @@ function init() {
           }
         }
       }
-      if (truArray.includes(true)){
-        console.log('cannot rotate down ' + ship.classS + ' ' +ship.startLocation)
-      }
+      // if (truArray.includes(true)){
+      //   console.log('cannot rotate down ' + ship.classS + ' ' +ship.startLocation)
+      // }
       return truArray
     }
   }
@@ -293,7 +303,7 @@ function init() {
   function rotateShip(ship, letter){
     if (ship.orientation === 'vertical'){
       if(validateRotation(ship, letter).includes(true)){
-        console.log("Can't be rotated at this location " + ship.startLocation)
+        console.log("Can't be rotated at this location")
       } else {
         ship.orientation = 'horizontal'
         unplaceShip(ship)
@@ -301,7 +311,7 @@ function init() {
       }
     } else {
       if(validateRotation(ship, letter).includes(true)){
-        console.log("Can't be rotated at this location " + ship.startLocation)
+        console.log("Can't be rotated at this location")
       } else{
         ship.orientation = 'vertical'
         unplaceShip(ship)
@@ -310,22 +320,28 @@ function init() {
   }
   } 
 
+  // function computerGuess(){
+
+  // }
+
   function playerGuess(event) {
-    // replace background colors with classes of miss and hit
     // window.confirm("Confirm Firing Coordinates")
-      if (event.target.className === 'carrierC' || event.target.className === 'battleshipC' || event.target.className === 'destroyerC' || event.target.className === 'submarineC' || event.target.className === 'patrolboatC'){
-        // event.target.className
-        // ship.damage += 1
-        console.log(`We hit their ${event.target.className.slice(0,-1)}!`)
-        event.target.style.backgroundColor = 'red'
-      } else if (event.target.style.backgroundColor === 'red'){
-        console.log('already hit here')
-      } else if (event.target.style.backgroundColor === ''){
-        console.log('Miss!')
-        event.target.style.backgroundColor = 'grey'
-      } else if (event.target.style.backgroundColor === 'grey'){
-        console.log('You already missed here.')
-      }
+    const eT = event.target
+    const guessClass = event.target.className
+    if (computerClasses.includes(guessClass)){
+      // event.target.className
+      // ship.damage += 1
+      // figure out how to add damage here
+      console.log(`We hit their ${guessClass.slice(0,-1)}!`)
+      eT.style.backgroundColor = 'red'
+    } else if (eT.style.backgroundColor === 'red'){
+      console.log('already hit here')
+    } else if (eT.style.backgroundColor === ''){
+      console.log('Miss!')
+      eT.style.backgroundColor = 'grey'
+    } else if (event.target.style.backgroundColor === 'grey'){
+      console.log('You already missed here.')
+    }
   }
 
   function rotateSelection(event){
@@ -337,11 +353,10 @@ function init() {
     let shipD = shipObjectClass.charAt(0).toUpperCase() + shipObjectClass.slice(1, -1)
     event.target.innerHTML = shipD
     selectedShip = playersShips[currentShipIndex]
-    // console.log(selectedShip)
   }
 
   function rotateButton(){
-    console.log('pushed rotate button', selectedShip, 'currently selected ship')
+    // console.log('pushed rotate button', selectedShip, 'currently selected ship')
     rotateShip(selectedShip, 'P')
   }
 
@@ -417,53 +432,82 @@ function init() {
   function startButton(){
     if (difficultyLevel.length > 0){
       startB.disabled = true
-      console.log('started!!!')
+      rotateB.disabled = false
+      shipSelector.disabled = false
+      fightB.disabled = false
 
-      const disGssGrd = document.querySelector('.grid-wrapper')
-      disGssGrd.style.display = 'flex'
+      console.log('Begin Placement Phase')
+
+      // INITIALIZATION BLOCK HERE FOR NOW
+      // summarize into a forEach for expediency and accuracy
+      rndmInitializeShip(carrierC,'')
+      placeShip(carrierC, '')
+    
+      rndmInitializeShip(battleshipC, '')
+      placeShip(battleshipC, '')
+    
+      rndmInitializeShip(destroyerC, '')
+      placeShip(destroyerC, '')
+    
+      rndmInitializeShip(submarineC, '')
+      placeShip(submarineC, '')
+    
+      rndmInitializeShip(patrolboatC, '')
+      placeShip(patrolboatC, '')
+    
+      rndmInitializeShip(carrierP,'P')
+      placeShip(carrierP, 'P')
+    
+      rndmInitializeShip(battleshipP, 'P')
+      placeShip(battleshipP, 'P')
+    
+      rndmInitializeShip(destroyerP, 'P')
+      placeShip(destroyerP, 'P')
+    
+      rndmInitializeShip(submarineP, 'P')
+      placeShip(submarineP, 'P')
+    
+      rndmInitializeShip(patrolboatP, 'P')
+      placeShip(patrolboatP, 'P')
+
     } else {
       console.log('choose a difficulty level first')
     }
+  }
+
+  function fightButton(){
+      const disGssGrd = document.querySelector('.grid-wrapper')
+      disGssGrd.style.display = 'flex'
+      fightB.disabled = true
+      shipSelector.disabled = true
+      rotateB.disabled = true
+      fightB.style.display = 'none'
+      quitB.style.display = 'unset'
+      quitB.disabled = false
+
+      // GAME PLAY LOOP HERE FOR NOW
+
+      
+
+
+
+  }
+
+  function fakeQuit(){
+    location.reload()
   }
 
 // ~~~~~   EVENT LISTENERS   ~~~~~~
   shipSelector.addEventListener('click', rotateSelection)
   rotateB.addEventListener('click', rotateButton)
   startB.addEventListener('click', startButton)
-  boxA1.forEach(bx => bx.addEventListener('click', playerGuess))
+  computerBoxes.forEach(bx => bx.addEventListener('click', playerGuess))
   difficultyLevels.forEach(btn => btn.addEventListener('click', setDifficulty))
-
+  fightB.addEventListener('click', fightButton)
+  quitB.addEventListener('click', fakeQuit)
 // ~~~~~   FINAL INITIALIZAIONS FOR TESTING STAGES    ~~~~~~
 
-  rndmInitializeShip(carrierC,'')
-  placeShip(carrierC, '')
 
-  rndmInitializeShip(battleshipC, '')
-  placeShip(battleshipC, '')
-
-  rndmInitializeShip(destroyerC, '')
-  placeShip(destroyerC, '')
-
-  rndmInitializeShip(submarineC, '')
-  placeShip(submarineC, '')
-
-  rndmInitializeShip(patrolboatC, '')
-  placeShip(patrolboatC, '')
-
-  rndmInitializeShip(carrierP,'P')
-  placeShip(carrierP, 'P')
-
-  rndmInitializeShip(battleshipP, 'P')
-  placeShip(battleshipP, 'P')
-
-  rndmInitializeShip(destroyerP, 'P')
-  placeShip(destroyerP, 'P')
-
-  rndmInitializeShip(submarineP, 'P')
-  placeShip(submarineP, 'P')
-
-  rndmInitializeShip(patrolboatP, 'P')
-  placeShip(patrolboatP, 'P')
 
 
 
@@ -483,6 +527,20 @@ function init() {
 
 
   // NOTES FOR MYSELF
+
+  // I have rotation selector and button
+  // I have randomized ship locations on both grids
+  // game Start should initialize ships
+  // 
+  // confirmation of strategy phase should display guess panel
+  // and start gameplay loop
+  // gameplay loop should have computer generated guesses after player confirms guess
+  // guesses should add damage, enough damage triggers destruction confirmation
+
+  // enough destroyed = gameplay loop end
+  
+  // end button = end -> reload to original conditions?
+
   // I need to build a game loop that ends when ships are destroyed
   // notification when a ship is destroyed
   // add damage to ships when hit
