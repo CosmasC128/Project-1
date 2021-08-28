@@ -433,9 +433,9 @@ function init() {
   ////    ii. advanced guessing
   // iii. search and destroy after a hit
   ////    a) hunting true/false variable 
-  //    b) hit location stored 
+  ////    b) hit location stored 
   //    c) to shoot at squares loaded 
-  //    d) end hunting if ship destroyed
+  ////    d) end hunting if ship destroyed
   //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
 
   // *** need to change player and computer guessing to change targets class to hit or miss ***
@@ -449,46 +449,76 @@ function init() {
   
   // SEARCH AND DESTROY GLOBAL CONSTANTS --- FEED INTO SEARCH AND DESTROY AND INTO COMPUTER GUESS
   let hunting = false
-  let hitLocation = ''
-  let huntingGuess = ''
+  let lastHitLocation = ''
+  let originalHitLocation = ''
+  let huntingGuess = 0
   const huntingLocations = []
+  let huntingCounter = 0
 
   function searchAndDestroy(hunting, guessStatus){
     // need a function that tells the ai what its next guess will be
     // if hunting is true get your guess from search and destroy, otherwise get a new random guess
-    console.log(hunting)
-    console.log(!hunting)
-    console.log(guessStatus)
-    if (hunting is false && guessStatus === 'hit'){ // exclamation point hunting
-    } else if (hunting is true && guessStatus === 'hit'){
+    // 5 potential outcomes the 5th being likely unnecessary
+    // if (hunting === true && guessStatus === 'hit'){
+    //   console.log('hunting is true and guess is a hit')
+    // } else if (hunting === true && guessStatus === 'miss'){
+    //   console.log('hunting is true and guess is a miss')
+    // }else if (hunting === false && guessStatus === 'hit') {
+    //   console.log('hunting is false and guess is a hit')
+    // } else if (hunting === false && guessStatus === 'miss') {
+    //   console.log('hunting is false and guess is a miss')
+    // }
 
-    } else if (hunting is false && guessStatus === 'miss') {
+    console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
+    console.log(lastHitLocation, 'last hit location at start of S&D work')
 
-    } else if (hunting is true && guessStatus === 'miss') {
-
-    } else if (hunting is false && guessStatus === 'clear') {}
 
     
-    
-    console.log('The last hunting guess was a ' + guessStatus)
+    // CODE THAT ACTUALLY DOES WORK
 
+    let hitNumber = Number(lastHitLocation.slice(-2))
+    // validation code for not above, not below, not off the left or right edge
+    //series of if statements that only add surrounding squares if we aren't on the edge
+    // and if they weren't already guessed before ... this may not be a problem, will keep an eye on it
+    let never = 'gridP' + doubleDigits(hitNumber-10)
+    let eat = 'gridP' + doubleDigits(hitNumber+1)
+    let shredded = 'gridP' + doubleDigits(hitNumber+10)
+    let wheat = 'gridP' + doubleDigits(hitNumber-1)
+
+    function pushCompassBearings(never, shredded, eat, wheat){
+      if(Number(lastHitLocation.slice(-1))< 9){
+        huntingLocations.push(eat)
+      }
+      if(Number(lastHitLocation.slice(-1))> 0){
+        huntingLocations.push(wheat)
+      }
+      if (Math.floor(hitNumber/10 < 9)){
+        huntingLocations.push(shredded)
+      }
+      if (Math.floor(hitNumber/10 > 0)){
+        huntingLocations.push(never)
+      }
+    }
+
+    if (hunting === false && guessStatus === 'hit'){
+      pushCompassBearings(never, shredded, eat, wheat)
+    } else if (hunting === true && guessStatus === 'hit'){
+      // here compare the last hit to the most recent hit, numerically it will give you a relation and then you can choose to only add a before and after
+      // and you can pop the east and west or north and south from the previous one
+    }
+
+    
+    originalHitLocation = lastHitLocation
+
+    console.log(huntingLocations)
+    huntingGuess = huntingLocations.pop()
+    console.log(huntingLocations)
+    console.log(huntingGuess, 'hunting guess')
     // if not hunting, and hit is passed in INITIALIZE, and go counter clockwise
-    // if hunting miss REVOLVE
-    // if hunting and hit, restart and go counter clockwise
+    // if hunting miss REVOLVE (aka keep going)
+    // if hunting and hit again (originalHitLocation = lastHitLocation and lastHitLocation = where we just hit(ref???)), restart and go counter clockwise
     // if hunting and hit, double down (hard part)
     // if hunting, and hit again, 
-
-    if(guessStatus === 'hit'){
-
-    } else{
-
-    }
-    
-    hitLocation -> feed 4 new locations into huntingLocations[] 
-    then iterate through them based on a counter each time the function is running
-    
-    huntingGuess = results of this function's work
-    //must reassign a new value to huntingGuess
   }
 
   function computerGuess(){
@@ -497,17 +527,9 @@ function init() {
     let guessClass = ''
     let warning = ''
     
-    // If the computer runs out of squares using the efficient 'advanced' guessing method, it will resort to guessing the rest of the squares
-    // this may end up being completely unecessary
     if (lessNumbers.length === 0){
       lessNumbers = backUpNumbers
     }
-
-    // I don't need this code for validation at the moment:
-    // console.log('computer is attacking remaining squares')
-    // else {
-    //   console.log(`${lessNumbers.length} numbers left`)
-    // }
 
     // ~~~~~~~~   MODULAR GUESS INFORMATION HERE   ~~~~~~~~
     //easy guess
@@ -522,7 +544,7 @@ function init() {
     //re-assigned above by the search and destroy function
     // huntingGuess
     let indexHunting = lessNumbers.indexOf(Number(huntingGuess))
-    let huntingId = 'gridP' + doubleDigits(huntingGuess)
+    let huntingId = huntingGuess
 
     // SELECTION OF INITIAL GUESS BASED ON DIFFICULTY
     if (difficultyLevel === 'easy' || difficultyLevel === 'medium'){ // easy guess tree
@@ -530,7 +552,7 @@ function init() {
         lessNumbers.splice(indexHunting, 1)
         guessLoc = document.getElementById(huntingId)
         guessClass = guessLoc.className
-        console.log('running search and destroy easy')
+        console.log(huntingId + ' hunting id ' + 'running search and destroy easy')
       } else { // procure a new easy guess and eliminate it from the remaining guesses
         loadsOfNumbers.splice(indexGuessEasy, 1)
         guessLoc = document.getElementById(compGuessLEasy)
@@ -539,9 +561,9 @@ function init() {
     } else { // advancing guessing tree
       if (hunting){ // if hunting is true, the last guess was a hit, and we will hunt until we destroy the ship hit
         lessNumbers.splice(indexHunting, 1)
+        console.log(huntingId + ' hunting id ' + 'running search and destroy advanced')
         guessLoc = document.getElementById(huntingId)
         guessClass = guessLoc.className
-        console.log('running search and destroy advanced')
       } else { // procure a new advanced guess and eliminate it from the remaining guesses
         lessNumbers.splice(indexGuessAdv, 1)
         guessLoc = document.getElementById(compGuessLAdv)
@@ -552,50 +574,57 @@ function init() {
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
 
-    if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){
+    if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
         scoreP -= 100
         guessLoc.style.backgroundColor = 'red'
+        lastHitLocation = guessLoc.id
+        console.log(lastHitLocation, 'lastHitLocation variable')
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
           if (hunting === false){
-            console.log(guessLoc.id, 'should be the id of the guessed square')
-            hitLocation = guessLoc.id
-            console.log(hitLocation, 'should be the the same id stored in the hitLocation variable')
             console.log('hunting triggered!')
             hunting = true
           }
-        
           searchAndDestroy(hunting, 'hit')
         }
 
-        if(damagedShip.damage === damagedShip.hitPoints){
+        if(damagedShip.damage === damagedShip.hitPoints){ // IF A SHIP IS TOTALLY DESTROYED BY A HIT
           console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
           scoreP -= 100
           damagedShip.destroyed = true
-          //when a ship is destroyed: these changes allow the appropriate level of difficulty random guessing to occur again
-          hunting = false // the hunting flag should be turned off
-          hitLocation = '' //the hit location (original hit) should be wiped
-          searchAndDestroy(hunting, 'clear') // and this may not be necessary, but should clear out the search and destroy for a new target
           destroyedShipsP.push(guessClass)
+          // add a destroyed class here to the squares of the ship, so that CSS can display ship (change opacity) and maybe desroyed ship image loaded
+          
+          //A DESTROYED SHIP ENDS HUNTING AND RE-INITIALIZES IT
+          if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
+            hunting = false // the hunting flag should be turned off
+            lastHitLocation = '' //the hit location (original hit) should be wiped
+            originalHitLocation = ''
+            huntingLocations = []
+          }
+
+          // THIS ENDS THE GAME
           if (destroyedShipsP.length === 5){
             console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP)
             winner = 'computer'
           }
-        } else {
+        } else { // IF A SHIP IS JUST DAMAGED BY A SHIP
           if (damagedShip.damage === (damagedShip.lengthS-1)){
             warning = " It is critically damaged!"
           }
           console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
-    } else if (guessLoc.style.backgroundColor === ''){
+    } else if (guessLoc.style.backgroundColor === ''){ // IF A COMPUTER'S GUESS MISSES A SHIP
       console.log('They missed us Admiral!')
-      searchAndDestroy('miss')
+      if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
+        searchAndDestroy(hunting, 'miss')
+      }
       guessLoc.style.backgroundColor = 'grey'
     }
   }
 
-  // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){}
+  // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){} IMPLEMENT ONLY AFTER I'M DONE TWEAKING GAMEPLAY
 
   function playerGuess(event) {
     const eT = event.target
