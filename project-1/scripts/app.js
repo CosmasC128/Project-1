@@ -2,32 +2,26 @@ function init() {
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  // on end, show score. Score is hits scored minus enemy hits.
-  // way to reset the game without browser refresh?
-
   // NOTES FOR MYSELF
   
-  // quit button = end -> reload to original conditions? (currently reloads  page)
-  // I need to build a game loop that ends when ships are destroyed
-  // make sure guessing stuff isn't possible before the right time
-  // add scoring on hits and remove score when hit
-  // score tracker, works with final page
-  // drag and drop in strategy phase
   
-  // these two steps and i have mvp easily
-  // NEXT STEPS AFTER THAT ARE, DRAGGABLE PLAYER SHIPS
-  // CREATE AI GUESSING CODE
+  // *** REQUIRED FOR MVP ***  
+  // *****DRAG AND DROP IN THE STRATEGY PHASE****
+  // *** CREATE AI GUESSING CODE ***
 
-  // Current To Dos:
+  // WEDNESDAY
   // 4. AI levels of guessing loaded upon difficulty level
-  //    this is either 1) multiple guess generators 2) once a hit confirmed, next guess based off that
-
+  //    i. advanced and random guessing ii. search and destroy after a hit
+  //       BONUS   iii. re-evaluate andvanced guessing after destorying smallest ships
+  
   //8. draggable ships?
 
-  // 1. scoring
+  // 1. forEach loop on initialization
   // 2. turn all console logs into alerts/confirms
   // 3. reveal ships when they are destroyed for both teams 
 
+
+  // THURSDAY
   // 5. Game Ending programming (quit resets this and normal states without reloading whole page?)
   // 6. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
   // 7. Add sound effects, add music, add a mute button for effects and a mute for sound
@@ -352,16 +346,36 @@ function init() {
     }
   }
 
+
+  // easy difficulty is simply random guess fed into computerGuess (easy??)
+  // medium difficulty is random guess fed into computerguess + search and destroy functionality
+  // hard difficulty is efficient random guessing + search and destroy functionality 
+  function randomGuess(){
+
+  }
+
+  function advancedRandomGuess(){
+
+  }
+
+  function searchAndDestroy(){
+    // need a function that tells the ai what its next guess will be
+
+  }
+
   function computerGuessEasy(){
-    // window.confirm("Confirm Firing Coordinates")
+    // changes with difficulty levels
     let numGuess = doubleDigits(loadsOfNumbers[getRandomInt(loadsOfNumbers.length)])
+    let indexGuess = loadsOfNumbers.indexOf(Number(numGuess))
+    loadsOfNumbers.splice(indexGuess, 1)
+
+    // does not need to change between difficulty levels
     let compGuessL = 'gridP' + numGuess
     const guessLocC = document.getElementById(compGuessL)
     const guessClass = guessLocC.className
     let validHit = false
     let warning = ''
-    let indexGuess = loadsOfNumbers.indexOf(Number(numGuess))
-    loadsOfNumbers.splice(indexGuess, 1)
+
     if (guessLocC.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
@@ -369,10 +383,10 @@ function init() {
         guessLocC.style.backgroundColor = 'red'
         if(damagedShip.damage === damagedShip.hitPoints){
           console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
-          (damagedShip.classS)
+          scoreP -= 100
           destroyedShipsP.push(guessClass)
           if (destroyedShipsP.length === 5){
-            console.log('They have destroyed our fleet! The day is lost!')
+            console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP)
             winner = 'computer'
           }
         } else {
@@ -395,13 +409,15 @@ function init() {
     if (eT.style.backgroundColor != 'red' && computerClasses.includes(guessClass) ){
       let damagedShip = computerShips[computerClasses.indexOf(guessClass)]
       damagedShip.damage++
+      scoreP += 100
       eT.style.backgroundColor = 'red'
 
       if(damagedShip.damage === damagedShip.hitPoints){
         console.log(`We destroyed their ${guessClass.slice(0,-1)} Admiral! One step closer to victory!`)
         destroyedShipsC.push(guessClass)
+        scoreP += 100
         if (destroyedShipsC.length === 5){
-          console.log('We have destroyed their fleet! Victory is ours!')
+          console.log(`We have destroyed their fleet! Victory is ours! Your score: ${scoreP}`)
           winner = 'player'
         } else {
           parseDifficulty()
@@ -432,9 +448,7 @@ function init() {
     selectedShip = playersShips[currentShipIndex]
   }
 
-  function rotateButton(){
-    rotateShip(selectedShip, 'P')
-  }
+
 
   function rndmInitializeShip(ship, letter){
     let validStart = false
@@ -446,20 +460,16 @@ function init() {
     }
     let pass = 0
     while (validStart === false && pass < 12){
-      // console.log('Pass -', pass)
       if (ship.orientation === 'vertical') {
         let gridLoc = 'grid' + letter + doubleDigits(getRandomInt(100-(((ship.lengthS-1)*10))))
         let getEl = document.getElementById(gridLoc)
         if (shipClasses.includes(getEl.className)){
-          // console.log(`${document.getElementById(gridLoc).className} already there ${gridLoc}`)
           continue
         } else {
           ship.startLocation = gridLoc
           if(validateSpawn(ship, letter).includes(true)){
-            // console.log("Can't Spawn Here - Retrying - FAILURE ZONE WITHOUT RELOOPING - VERTICAL")
             ship.startLocation = ''
           } else {
-            // console.log('successful fresh placement at ' + gridLoc + ' from if')
             validStart = true
           }
         }
@@ -469,21 +479,37 @@ function init() {
         let getEl = document.getElementById(gridLoc)
         
         if (shipClasses.includes(getEl.className)){
-          // console.log(`${document.getElementById(gridLoc).className} already there ${gridLoc}`)
           continue
         } else {
           ship.startLocation = gridLoc
           if(validateSpawn(ship, letter).includes(true)){
-            // console.log("Can't Spawn Here - Retrying - FAILURE ZONE WITHOUT RELOOPING - HORIZONTAL")
             ship.startLocation = ''
           } else {
-            // console.log('successful fresh placement at ' + gridLoc +' from else')
             validStart = true
           }
         }
       }
       pass += 1
     }
+  }
+
+  // ~~~~~   MENU BUTTON FUNCTIONS   ~~~~~~
+
+  function fightButton(){
+    disGssGrd.style.display = 'flex'
+    fightB.disabled = true
+    shipSelector.disabled = true
+    rotateB.disabled = true
+    fightB.style.display = 'none'
+    quitB.style.display = 'unset'
+    quitB.disabled = false
+
+    // GAME PLAY LOOP HERE FOR NOW
+    // not sure if there will be another gameplay loop after this
+  }
+
+  function rotateButton(){
+    rotateShip(selectedShip, 'P')
   }
 
   function setDifficulty(event){
@@ -547,18 +573,7 @@ function init() {
     }
   }
 
-  function fightButton(){
-      disGssGrd.style.display = 'flex'
-      fightB.disabled = true
-      shipSelector.disabled = true
-      rotateB.disabled = true
-      fightB.style.display = 'none'
-      quitB.style.display = 'unset'
-      quitB.disabled = false
 
-      // GAME PLAY LOOP HERE FOR NOW
-
-  }
 
   function fakeQuit(){
     location.reload()
