@@ -32,6 +32,7 @@ function init() {
   const startB = document.getElementById('start')
   const rotateB = document.getElementById('rotate')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
+  const disGssGrd = document.querySelector('.grid-wrapper')
   const fightB = document.getElementById('fight')
   const quitB = document.getElementById('quit')
   const shipSelector = document.getElementById('ship')
@@ -39,6 +40,8 @@ function init() {
   const shipClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC', 'carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
   const computerClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC']
   const playerClasses = ['carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
+  let destroyedShipsP = []
+  let destroyedShipsC = []
   
   // initialize buttons as disabled unless activated by phases
   rotateB.disabled = true
@@ -141,9 +144,10 @@ function init() {
   }
   const allShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC, carrierP, battleshipP, destroyerP, submarineP, patrolboatP]
   const playersShips = [carrierP,battleshipP,destroyerP,submarineP,patrolboatP]
-  const computersShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC]
+  const computerShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC]
   let currentShipIndex = 0
   let selectedShip = destroyerP
+  let winner = ''
 
   // ~~~~~   GRID CONSTRUCTION AND UTILIZATION START ~~~~~~
   const grid = document.querySelector('.grid')
@@ -327,20 +331,30 @@ function init() {
   function playerGuess(event) {
     // window.confirm("Confirm Firing Coordinates")
     const eT = event.target
-    const guessClass = event.target.className
-    if (computerClasses.includes(guessClass)){
-      // event.target.className
-      // ship.damage += 1
-      // figure out how to add damage here
-      console.log(`We hit their ${guessClass.slice(0,-1)}!`)
+    const guessClass = eT.className
+    if (eT.style.backgroundColor != 'red' && computerClasses.includes(guessClass) ){
+      let damagedShip = computerShips[computerClasses.indexOf(guessClass)]
+      damagedShip.damage++
       eT.style.backgroundColor = 'red'
+
+      if(damagedShip.damage === damagedShip.hitPoints){
+        console.log(`We destroyed their ${guessClass.slice(0,-1)} Admiral! One step closer to victory!`)
+        destroyedShipsC.push(guessClass)
+        if (destroyedShipsC.length === 5){
+          console.log('We have destroyed their fleet! Victory is ours!')
+          winner = 'Player'
+
+        }
+      } else {
+        console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
+      }
     } else if (eT.style.backgroundColor === 'red'){
-      console.log('already hit here')
+      console.log('We already hit here. Choose new coordinates Admiral...')
     } else if (eT.style.backgroundColor === ''){
-      console.log('Miss!')
+      console.log('We missed Admiral!')
       eT.style.backgroundColor = 'grey'
-    } else if (event.target.style.backgroundColor === 'grey'){
-      console.log('You already missed here.')
+    } else if (eT.style.backgroundColor === 'grey'){
+      console.log('We already missed here. Choose new coordinates Admiral...')
     }
   }
 
@@ -476,7 +490,6 @@ function init() {
   }
 
   function fightButton(){
-      const disGssGrd = document.querySelector('.grid-wrapper')
       disGssGrd.style.display = 'flex'
       fightB.disabled = true
       shipSelector.disabled = true
