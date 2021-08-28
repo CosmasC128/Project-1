@@ -13,15 +13,21 @@ function init() {
   // add scoring on hits and remove score when hit
   // score tracker, works with final page
   // drag and drop in strategy phase
+  
+  // these two steps and i have mvp easily
   // NEXT STEPS AFTER THAT ARE, DRAGGABLE PLAYER SHIPS
   // CREATE AI GUESSING CODE
 
   // Current To Dos:
+  // 4. AI levels of guessing loaded upon difficulty level
+  //    this is either 1) multiple guess generators 2) once a hit confirmed, next guess based off that
+
+  //8. draggable ships?
+
   // 1. scoring
   // 2. turn all console logs into alerts/confirms
   // 3. reveal ships when they are destroyed for both teams 
-  // 4. AI levels of guessing loaded upon difficulty level
-  //    this is either 1) multiple guess generators 2) once a hit confirmed, next guess based off that
+
   // 5. Game Ending programming (quit resets this and normal states without reloading whole page?)
   // 6. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
   // 7. Add sound effects, add music, add a mute button for effects and a mute for sound
@@ -41,6 +47,7 @@ function init() {
   const quitB = document.getElementById('quit')
   const shipSelector = document.getElementById('ship')
   let difficultyLevel = ''
+  let scoreP = 0
   const shipClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC', 'carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
   const computerClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC']
   const playerClasses = ['carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
@@ -177,11 +184,9 @@ function init() {
       const cell = document.createElement('div')
       cell.id = gridInput.className
       cell.id += doubleDigits(i)
-
       gridInput.appendChild(cell)
       cells.push(cell)
     }
-
   }
 
   createGrid(grid)
@@ -336,7 +341,18 @@ function init() {
   }
   } 
 
-  function computerGuess(){
+  function parseDifficulty(){
+    if (difficultyLevel === 'hard'){
+      console.log('this does not exist yet')
+    } else if (difficultyLevel === 'medium') {
+      console.log('this does not exist yet')
+    } else {
+      console.log('computer easy guess')
+      computerGuessEasy()
+    }
+  }
+
+  function computerGuessEasy(){
     // window.confirm("Confirm Firing Coordinates")
     let numGuess = doubleDigits(loadsOfNumbers[getRandomInt(loadsOfNumbers.length)])
     let compGuessL = 'gridP' + numGuess
@@ -349,6 +365,7 @@ function init() {
     if (guessLocC.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
+        scoreP -= 100
         guessLocC.style.backgroundColor = 'red'
         if(damagedShip.damage === damagedShip.hitPoints){
           console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
@@ -387,18 +404,18 @@ function init() {
           console.log('We have destroyed their fleet! Victory is ours!')
           winner = 'player'
         } else {
-          computerGuess()
+          parseDifficulty()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
-        computerGuess()
+        parseDifficulty()
       }
     } else if (eT.style.backgroundColor === 'red'){
       console.log('We already hit here. Choose new coordinates Admiral...')
     } else if (eT.style.backgroundColor === ''){
       console.log('We missed Admiral!')
       eT.style.backgroundColor = 'grey'
-      computerGuess()
+      parseDifficulty()
     } else if (eT.style.backgroundColor === 'grey'){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
@@ -416,7 +433,6 @@ function init() {
   }
 
   function rotateButton(){
-    // console.log('pushed rotate button', selectedShip, 'currently selected ship')
     rotateShip(selectedShip, 'P')
   }
 
