@@ -10,21 +10,21 @@ function init() {
   // *** CREATE AI GUESSING CODE ***
 
   // WEDNESDAY
-  // 4. AI levels of guessing loaded upon difficulty level
+  // 1. AI levels of guessing loaded upon difficulty level
   //    i. advanced and random guessing ii. search and destroy after a hit
   //       BONUS   iii. re-evaluate andvanced guessing after destorying smallest ships
-  
-  //8. draggable ships?
+  // 2. change hits and misses to add classes of hit and miss for assets and for detection
+  //3. draggable ships?
 
-  // 1. forEach loop on initialization
-  // 2. turn all console logs into alerts/confirms
-  // 3. reveal ships when they are destroyed for both teams 
+  // 4. forEach loop on initialization
+  // 5. turn all console logs into alerts/confirms
+  // 6. reveal ships when they are destroyed for both teams 
 
 
   // THURSDAY
-  // 5. Game Ending programming (quit resets this and normal states without reloading whole page?)
-  // 6. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
-  // 7. Add sound effects, add music, add a mute button for effects and a mute for sound
+  // 7. Game Ending programming (quit resets this and normal states without reloading whole page?)
+  // 8. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
+  // 9. Add sound effects, add music, add a mute button for effects and a mute for sound
 
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,6 +195,9 @@ function init() {
 
   // FUNCTIONS
 
+
+  // ~~~~~~~~   SHIP PLACEMENT AND VALIDATION SECTION ( INITIALIZATION / STRATEGY / PLACEMENT PHASE)   ~~~~~~~~
+
   function getRandomInt(max) {
     return Math.floor(Math.random() * max)
   }
@@ -346,8 +349,65 @@ function init() {
     }
   }
 
+  function rotateSelection(event){
+    currentShipIndex++
+    if (currentShipIndex > (playersShips.length-1)){
+      currentShipIndex -= (playersShips.length)
+    }
+    let shipObjectClass = playersShips[currentShipIndex].classS
+    let shipD = shipObjectClass.charAt(0).toUpperCase() + shipObjectClass.slice(1, -1)
+    event.target.innerHTML = shipD
+    selectedShip = playersShips[currentShipIndex]
+  }
 
-  // easy difficulty is simply random guess fed into computerGuess (easy??)
+  function rndmInitializeShip(ship, letter){
+    let validStart = false
+    let orientNum = getRandomInt(2)
+    if (orientNum === 0){
+      ship.orientation = 'vertical'
+    } else {
+      ship.orientation = 'horizontal'
+    }
+    let pass = 0
+    while (validStart === false && pass < 12){
+      if (ship.orientation === 'vertical') {
+        let gridLoc = 'grid' + letter + doubleDigits(getRandomInt(100-(((ship.lengthS-1)*10))))
+        let getEl = document.getElementById(gridLoc)
+        if (shipClasses.includes(getEl.className)){
+          continue
+        } else {
+          ship.startLocation = gridLoc
+          if(validateSpawn(ship, letter).includes(true)){
+            ship.startLocation = ''
+          } else {
+            validStart = true
+          }
+        }
+      } 
+      else {
+        let gridLoc = ('grid' + letter + String(getRandomInt(10)) + String(getRandomInt(10-(ship.lengthS-1))))
+        let getEl = document.getElementById(gridLoc)
+        
+        if (shipClasses.includes(getEl.className)){
+          continue
+        } else {
+          ship.startLocation = gridLoc
+          if(validateSpawn(ship, letter).includes(true)){
+            ship.startLocation = ''
+          } else {
+            validStart = true
+          }
+        }
+      }
+      pass += 1
+    }
+  }
+
+  // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
+
+
+
+    // easy difficulty is simply random guess fed into computerGuess (easy??)
   // medium difficulty is random guess fed into computerguess + search and destroy functionality
   // hard difficulty is efficient random guessing + search and destroy functionality 
   function randomGuess(){
@@ -437,62 +497,6 @@ function init() {
     }
   }
 
-  function rotateSelection(event){
-    currentShipIndex++
-    if (currentShipIndex > (playersShips.length-1)){
-      currentShipIndex -= (playersShips.length)
-    }
-    let shipObjectClass = playersShips[currentShipIndex].classS
-    let shipD = shipObjectClass.charAt(0).toUpperCase() + shipObjectClass.slice(1, -1)
-    event.target.innerHTML = shipD
-    selectedShip = playersShips[currentShipIndex]
-  }
-
-
-
-  function rndmInitializeShip(ship, letter){
-    let validStart = false
-    let orientNum = getRandomInt(2)
-    if (orientNum === 0){
-      ship.orientation = 'vertical'
-    } else {
-      ship.orientation = 'horizontal'
-    }
-    let pass = 0
-    while (validStart === false && pass < 12){
-      if (ship.orientation === 'vertical') {
-        let gridLoc = 'grid' + letter + doubleDigits(getRandomInt(100-(((ship.lengthS-1)*10))))
-        let getEl = document.getElementById(gridLoc)
-        if (shipClasses.includes(getEl.className)){
-          continue
-        } else {
-          ship.startLocation = gridLoc
-          if(validateSpawn(ship, letter).includes(true)){
-            ship.startLocation = ''
-          } else {
-            validStart = true
-          }
-        }
-      } 
-      else {
-        let gridLoc = ('grid' + letter + String(getRandomInt(10)) + String(getRandomInt(10-(ship.lengthS-1))))
-        let getEl = document.getElementById(gridLoc)
-        
-        if (shipClasses.includes(getEl.className)){
-          continue
-        } else {
-          ship.startLocation = gridLoc
-          if(validateSpawn(ship, letter).includes(true)){
-            ship.startLocation = ''
-          } else {
-            validStart = true
-          }
-        }
-      }
-      pass += 1
-    }
-  }
-
   // ~~~~~   MENU BUTTON FUNCTIONS   ~~~~~~
 
   function fightButton(){
@@ -538,6 +542,19 @@ function init() {
 
       // INITIALIZATION BLOCK HERE FOR NOW
       // summarize into a forEach for expediency and accuracy
+
+  // for (let i = 0; i<allShips.length; i++){
+  //   if (allShips[i].slice(-1) === 'C'){
+  //     rndmInitializeShip(allShips[i], '')
+  //     placeShip(allShips[i], '')
+  //   } else {
+  //     rndmInitializeShip(allShips[i], 'P')
+  //     placeShip(allShips[i], 'P')
+  //   }
+
+  // }
+
+
       rndmInitializeShip(carrierC,'')
       placeShip(carrierC, '')
     
@@ -579,30 +596,22 @@ function init() {
     location.reload()
   }
 
+  // ~~~~~   GAME PLAY SECTION END   ~~~~~~
+
+
+
 // ~~~~~   EVENT LISTENERS   ~~~~~~
-  shipSelector.addEventListener('click', rotateSelection)
+
+shipSelector.addEventListener('click', rotateSelection)
   rotateB.addEventListener('click', rotateButton)
   startB.addEventListener('click', startButton)
   computerBoxes.forEach(bx => bx.addEventListener('click', playerGuess))
   difficultyLevels.forEach(btn => btn.addEventListener('click', setDifficulty))
   fightB.addEventListener('click', fightButton)
   quitB.addEventListener('click', fakeQuit)
-// ~~~~~   FINAL INITIALIZAIONS FOR TESTING STAGES    ~~~~~~
 
+  // ~~~~~   FINAL INITIALIZAIONS FOR TESTING STAGES    ~~~~~~
 
-
-
-
-  // for (let i = 0; i<allShips.length; i++){
-  //   if (allShips[i].slice(-1) === 'C'){
-  //     rndmInitializeShip(allShips[i], '')
-  //     placeShip(allShips[i], '')
-  //   } else {
-  //     rndmInitializeShip(allShips[i], 'P')
-  //     placeShip(allShips[i], 'P')
-  //   }
-
-  // }
 
 }
 
