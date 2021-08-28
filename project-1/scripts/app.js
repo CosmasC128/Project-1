@@ -1,38 +1,47 @@
 function init() {
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   // NOTES FOR MYSELF
-  
-  
   // *** REQUIRED FOR MVP ***  
   // *****DRAG AND DROP IN THE STRATEGY PHASE****
   // *** CREATE AI GUESSING CODE ***
 
-  // WEDNESDAY
+  // WEDNESDAY:
   // 1. AI levels of guessing loaded upon difficulty level
-  //    i. advanced and random guessing ii. search and destroy after a hit
-  //       BONUS   iii. re-evaluate andvanced guessing after destorying smallest ships
+  ////    i. random guessing
+  //    ii. advanced guessing
+  //    iii. search and destroy after a hit
+  //        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
+  //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
   // 2. change hits and misses to add classes of hit and miss for assets and for detection
-  //3. draggable ships?
+  // 3. draggable ships?
 
-  // 4. forEach loop on initialization
+  // *** NOT REQUIRED FOR MVP BUT WILL ADD PROFESSIONALISM AT THE VERY LEAST*** 
+  //// 4. forEach loop on initialization
   // 5. turn all console logs into alerts/confirms
   // 6. reveal ships when they are destroyed for both teams 
 
-
-  // THURSDAY
+  // THURSDAY:
   // 7. Game Ending programming (quit resets this and normal states without reloading whole page?)
   // 8. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
   // 9. Add sound effects, add music, add a mute button for effects and a mute for sound
-
-
+  
+  // IF TIME REMAINS:
+  // 10. Commenting for intelligibility
+  // 11. Code Dryness / Refactoring
+  
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // ~~~~~~~~~~~~    CODING BEGINS HERE   ~~~~~~~~~~~~~~~~
 
-  // const gridBoxes = document.querySelectorAll('.gridDiv')
-  // const gridBoxesP = document.querySelectorAll('.gridPDiv')
+
+    // ~~~~~~~~~~~~    CODING BEGINS HERE   ~~~~~~~~~~~~~~~~
+  
+  // BASIC GLOBAL GAME CONDITION VARIABLES
+  let scoreP = 0
+  let difficultyLevel = ''
+  let winner = ''
+
+  // HTML ELEMENT REFERENCES
   const startB = document.getElementById('start')
   const rotateB = document.getElementById('rotate')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
@@ -40,25 +49,40 @@ function init() {
   const fightB = document.getElementById('fight')
   const quitB = document.getElementById('quit')
   const shipSelector = document.getElementById('ship')
-  let difficultyLevel = ''
-  let scoreP = 0
+
+  // SHIP CLASSES AND DESTROYED SHIP ARRAYS
   const shipClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC', 'carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
   const computerClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC']
   const playerClasses = ['carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
   let destroyedShipsP = []
   let destroyedShipsC = []
+  
+  // FOR COMPUTER'S GUESSING
+  
+  // random / easy guess
   let loadsOfNumbers = []
   for (let i = 0; i<100;i++){
     loadsOfNumbers.push(i)
   }
-  
-  // initialize buttons as disabled unless activated by phases
+
+  // advanced guess
+  let lessNumbers = []
+  let evens = [0, 2, 4, 6, 8]
+  for (let i = 1; i<100;i+=2){
+    if (evens.includes(Math.floor(i/10))){
+      lessNumbers.push(i)
+    } else {
+      lessNumbers.push(i-1)
+    }
+  }
+
+  // INITIALIZE BUTTONS AS DISABLED UNTIL GAME STARTED
   rotateB.disabled = true
   shipSelector.disabled = true
   fightB.disabled = true
   quitB.disabled = true
 
-  // ~~~~~~~~~~ COMPUTER SHIPS ~~~~~~~~~~~~
+  // ~~~~~~~~~~ COMPUTER AND PLAYER SHIPS ~~~~~~~~~~~~
   const carrierC = {
     classS: 'carrierC',
     lengthS: 5,
@@ -105,7 +129,8 @@ function init() {
     startLocation: 'grid99',
   }
 
-  // ~~~~~~~~~~ PLAYER SHIPS ~~~~~~~~~~~~
+  // PLAYER
+  
   const carrierP = {
     classS: 'carrierP',
     lengthS: 5,
@@ -151,12 +176,16 @@ function init() {
     orientation: 'vertical',
     startLocation: 'grid01',
   }
+
+  // SHIP OBJECT ARRAYS FOR REFERENCING
   const allShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC, carrierP, battleshipP, destroyerP, submarineP, patrolboatP]
   const playersShips = [carrierP,battleshipP,destroyerP,submarineP,patrolboatP]
   const computerShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC]
+  
+  // FOR THE SELECTION AND ROTATION BUTTONS
   let currentShipIndex = 0
   let selectedShip = destroyerP
-  let winner = ''
+
 
   // ~~~~~   GRID CONSTRUCTION AND UTILIZATION START ~~~~~~
   const grid = document.querySelector('.grid')
@@ -187,6 +216,8 @@ function init() {
   createGrid(gridP)
 // ~~~~~   GRID CONSTRUCTION AND UTILIZATION END ~~~~~~
 
+
+
 // ~~~~~   GAME PLAY SECTION    ~~~~~~
   
   // GRID BASED CONSTANTS
@@ -194,7 +225,6 @@ function init() {
   const computerBoxes = document.querySelectorAll('.grid div')
 
   // FUNCTIONS
-
 
   // ~~~~~~~~   SHIP PLACEMENT AND VALIDATION SECTION ( INITIALIZATION / STRATEGY / PLACEMENT PHASE)   ~~~~~~~~
 
@@ -405,11 +435,21 @@ function init() {
 
   // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
 
-
-
-    // easy difficulty is simply random guess fed into computerGuess (easy??)
+  // easy difficulty is simply random guess fed into computerGuess (easy??)
   // medium difficulty is random guess fed into computerguess + search and destroy functionality
   // hard difficulty is efficient random guessing + search and destroy functionality 
+
+  // AI levels of guessing loaded upon difficulty level
+  ////    i. random guessing
+  //    ii. advanced guessing
+  //    iii. search and destroy after a hit
+  //        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
+  //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
+
+  // need to change player and computer guessing to change targets class to hit or miss
+  // then feedback and styling comes from those classes
+  // so first I have to add those classes
+
   function randomGuess(){
 
   }
@@ -537,60 +577,22 @@ function init() {
       rotateB.disabled = false
       shipSelector.disabled = false
       fightB.disabled = false
-
       console.log('Begin Placement Phase')
 
-      // INITIALIZATION BLOCK HERE FOR NOW
-      // summarize into a forEach for expediency and accuracy
-
-  // for (let i = 0; i<allShips.length; i++){
-  //   if (allShips[i].slice(-1) === 'C'){
-  //     rndmInitializeShip(allShips[i], '')
-  //     placeShip(allShips[i], '')
-  //   } else {
-  //     rndmInitializeShip(allShips[i], 'P')
-  //     placeShip(allShips[i], 'P')
-  //   }
-
-  // }
-
-
-      rndmInitializeShip(carrierC,'')
-      placeShip(carrierC, '')
-    
-      rndmInitializeShip(battleshipC, '')
-      placeShip(battleshipC, '')
-    
-      rndmInitializeShip(destroyerC, '')
-      placeShip(destroyerC, '')
-    
-      rndmInitializeShip(submarineC, '')
-      placeShip(submarineC, '')
-    
-      rndmInitializeShip(patrolboatC, '')
-      placeShip(patrolboatC, '')
-    
-      rndmInitializeShip(carrierP,'P')
-      placeShip(carrierP, 'P')
-    
-      rndmInitializeShip(battleshipP, 'P')
-      placeShip(battleshipP, 'P')
-    
-      rndmInitializeShip(destroyerP, 'P')
-      placeShip(destroyerP, 'P')
-    
-      rndmInitializeShip(submarineP, 'P')
-      placeShip(submarineP, 'P')
-    
-      rndmInitializeShip(patrolboatP, 'P')
-      placeShip(patrolboatP, 'P')
-
+      allShips.forEach(ship => {
+        if (ship.classS.split('').includes('P')){
+          rndmInitializeShip(ship,'P')
+          placeShip(ship, 'P')
+        } else{
+          rndmInitializeShip(ship,'')
+          placeShip(ship, '')
+        }
+        })
+      
     } else {
       console.log('choose a difficulty level first')
     }
   }
-
-
 
   function fakeQuit(){
     location.reload()
@@ -598,11 +600,9 @@ function init() {
 
   // ~~~~~   GAME PLAY SECTION END   ~~~~~~
 
+  // ~~~~~   EVENT LISTENERS   ~~~~~~
 
-
-// ~~~~~   EVENT LISTENERS   ~~~~~~
-
-shipSelector.addEventListener('click', rotateSelection)
+  shipSelector.addEventListener('click', rotateSelection)
   rotateB.addEventListener('click', rotateButton)
   startB.addEventListener('click', startButton)
   computerBoxes.forEach(bx => bx.addEventListener('click', playerGuess))
@@ -611,6 +611,9 @@ shipSelector.addEventListener('click', rotateSelection)
   quitB.addEventListener('click', fakeQuit)
 
   // ~~~~~   FINAL INITIALIZAIONS FOR TESTING STAGES    ~~~~~~
+
+
+
 
 
 }
