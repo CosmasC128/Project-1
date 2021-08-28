@@ -17,6 +17,10 @@ body{
   margin-bottom: 20px;
 }
 
+.grid-wrapper{
+  display: none;
+}
+
 #rotationButtons{
   display: flex;
   flex-direction: column;
@@ -69,8 +73,6 @@ h1{
   cursor: pointer;
 }
 
-
-
 .grid, .gridP {
   display: flex;
   flex-wrap: wrap;
@@ -90,12 +92,11 @@ h1{
 }
 
 .gridP {
-  background-color: rgba(0, 4, 237, 0.392);
+  background-color: rgba(0, 4, 237, 0.292);
 }
 
 .patrolboatC, .carrierC, .battleshipC, .destroyerC, .submarineC, .patrolboatC {
   background-color: rgba(0, 0, 0, .3);
-  /* display: none; */
 }
 
 .carrierP{

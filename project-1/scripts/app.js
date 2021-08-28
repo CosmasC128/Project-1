@@ -35,9 +35,6 @@ function init() {
   const shipSelector = document.getElementById('ship')
   let difficultyLevel = ''
   const shipClasses = ['carrierC','battleshipC','destroyerC','submarineC','patrolboatC', 'carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
-  const playersShips = ['carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
-  let currentShipIndex = 0
-  let selectedShip = 'destroyerP'
 
   // ~~~~~~~~~~ Computer Ships ~~~~~~~~~~~~
   const carrierC = {
@@ -133,6 +130,9 @@ function init() {
     startLocation: 'grid01',
   }
 
+  const playersShips = [carrierP,battleshipP,destroyerP,submarineP,patrolboatP]
+  let currentShipIndex = 0
+  let selectedShip = destroyerP
   const allShips = [carrierC, battleshipC, destroyerC, submarineC, patrolboatC, carrierP, battleshipP, destroyerP, submarineP, patrolboatP]
 
   // ~~~~~   GRID CONSTRUCTION AND UTILIZATION START ~~~~~~
@@ -297,7 +297,7 @@ function init() {
       } else {
         ship.orientation = 'horizontal'
         unplaceShip(ship)
-        placeShip(ship)
+        placeShip(ship, letter)
       }
     } else {
       if(validateRotation(ship, letter).includes(true)){
@@ -305,7 +305,7 @@ function init() {
       } else{
         ship.orientation = 'vertical'
         unplaceShip(ship)
-        placeShip(ship)
+        placeShip(ship, letter)
     }
   }
   } 
@@ -333,13 +333,15 @@ function init() {
     if (currentShipIndex > (playersShips.length-1)){
       currentShipIndex -= (playersShips.length)
     }
-    let shipD = playersShips[currentShipIndex].charAt(0).toUpperCase() + playersShips[currentShipIndex].slice(1, -1)
+    let shipObjectClass = playersShips[currentShipIndex].classS
+    let shipD = shipObjectClass.charAt(0).toUpperCase() + shipObjectClass.slice(1, -1)
     event.target.innerHTML = shipD
     selectedShip = playersShips[currentShipIndex]
-    console.log(selectedShip)
+    // console.log(selectedShip)
   }
 
   function rotateButton(){
+    console.log('pushed rotate button', selectedShip, 'currently selected ship')
     rotateShip(selectedShip, 'P')
   }
 
@@ -416,6 +418,9 @@ function init() {
     if (difficultyLevel.length > 0){
       startB.disabled = true
       console.log('started!!!')
+
+      const disGssGrd = document.querySelector('.grid-wrapper')
+      disGssGrd.style.display = 'flex'
     } else {
       console.log('choose a difficulty level first')
     }
