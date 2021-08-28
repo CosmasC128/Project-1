@@ -42,6 +42,10 @@ function init() {
   const playerClasses = ['carrierP','battleshipP','destroyerP','submarineP','patrolboatP']
   let destroyedShipsP = []
   let destroyedShipsC = []
+  let loadsOfNumbers = []
+  for (let i = 0; i<100;i++){
+    loadsOfNumbers.push(i)
+  }
   
   // initialize buttons as disabled unless activated by phases
   rotateB.disabled = true
@@ -188,6 +192,10 @@ function init() {
 
   // FUNCTIONS
 
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max)
+  }
+
   function parseShipL(ship, number){
     let slocN = ship.startLocation.slice(-2)
     if ((Number(slocN) + number) < 10){
@@ -324,12 +332,43 @@ function init() {
   }
   } 
 
-  // function computerGuess(){
-
-  // }
+  function computerGuess(){
+    // window.confirm("Confirm Firing Coordinates")
+    let numGuess = doubleDigits(loadsOfNumbers[getRandomInt(loadsOfNumbers.length)])
+    let compGuessL = 'gridP' + numGuess
+    const guessLocC = document.getElementById(compGuessL)
+    const guessClass = guessLocC.className
+    let validHit = false
+    let warning = ''
+    let indexGuess = loadsOfNumbers.indexOf(Number(numGuess))
+    loadsOfNumbers.splice(indexGuess, 1)
+    if (guessLocC.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){
+        let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
+        damagedShip.damage++
+        guessLocC.style.backgroundColor = 'red'
+        if(damagedShip.damage === damagedShip.hitPoints){
+          console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
+          (damagedShip.classS)
+          destroyedShipsP.push(guessClass)
+          if (destroyedShipsP.length === 5){
+            console.log('They have destroyed our fleet! The day is lost!')
+            winner = 'computer'
+          }
+        } else {
+          if (damagedShip.damage === (damagedShip.length-1)){
+            warning = " It is critically damaged!"
+          } 
+          console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
+        }
+      } else if (guessLocC.style.backgroundColor === ''){
+        console.log('They missed us Admiral!')
+        guessLocC.style.backgroundColor = 'grey'
+        validHit = true
+      }
+  }
 
   function playerGuess(event) {
-    // window.confirm("Confirm Firing Coordinates")
+    // window.confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")
     const eT = event.target
     const guessClass = eT.className
     if (eT.style.backgroundColor != 'red' && computerClasses.includes(guessClass) ){
@@ -342,17 +381,20 @@ function init() {
         destroyedShipsC.push(guessClass)
         if (destroyedShipsC.length === 5){
           console.log('We have destroyed their fleet! Victory is ours!')
-          winner = 'Player'
-
+          winner = 'player'
+        } else {
+          computerGuess()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
+        computerGuess()
       }
     } else if (eT.style.backgroundColor === 'red'){
       console.log('We already hit here. Choose new coordinates Admiral...')
     } else if (eT.style.backgroundColor === ''){
       console.log('We missed Admiral!')
       eT.style.backgroundColor = 'grey'
+      computerGuess()
     } else if (eT.style.backgroundColor === 'grey'){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
@@ -372,10 +414,6 @@ function init() {
   function rotateButton(){
     // console.log('pushed rotate button', selectedShip, 'currently selected ship')
     rotateShip(selectedShip, 'P')
-  }
-
-  function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
   }
 
   function rndmInitializeShip(ship, letter){
@@ -499,10 +537,6 @@ function init() {
       quitB.disabled = false
 
       // GAME PLAY LOOP HERE FOR NOW
-
-      
-
-
 
   }
 

@@ -100,7 +100,7 @@ h1{
 }
 
 .patrolboatC, .carrierC, .battleshipC, .destroyerC, .submarineC, .patrolboatC {
-  background-color: rgba(0, 0, 0, .3);
+  background-color: rgba(0, 0, 0, .1);
 }
 
 .carrierP{
