@@ -91,16 +91,33 @@ h1{
   border: 1px solid rgba(0,0,0,0.2);
 }
 
+.grid div{
+  border: 1px dotted rgba(66, 254, 4, 0.571);
+}
+
 .grid {
   background-color: rgba(143, 143, 143, 0.153);
 }
 
 .gridP {
   background-color: rgba(0, 4, 237, 0.292);
+  display: none;
 }
 
 .patrolboatC, .carrierC, .battleshipC, .destroyerC, .submarineC, .patrolboatC {
-  background-color: rgba(0, 0, 0, .1);
+  background-color: rgba(0, 0, 0, .01);
+}
+
+.destroyed {
+  opacity: none;
+}
+
+.hit{
+
+}
+
+.miss {
+
 }
 
 .carrierP{

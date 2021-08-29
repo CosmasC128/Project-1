@@ -2,26 +2,12 @@ function init() {
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
-  //// REQUIRED FOR MVP  
-  // *****DRAG AND DROP IN THE STRATEGY PHASE****
-  ////  CREATE AI GUESSING CODE
-
-  //// WEDNESDAY:
-  //// 1. AI levels of guessing loaded upon difficulty level
-  ////    i. random guessing
-  ////    ii. advanced guessing
-  ////    iii. search and destroy after a hit
-  ////        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
-  ////    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
-  // 2. change hits and misses to add classes of hit and miss for assets and for detection
-  // 3. draggable ships?
-
-  // *** NOT REQUIRED FOR MVP BUT WILL ADD PROFESSIONALISM AT THE VERY LEAST*** 
-  //// 4. forEach loop on initialization
-  // 5. turn all console logs into alerts/confirms
-  // 6. reveal ships when they are destroyed for both teams 
 
   // THURSDAY:
+  // 2. change hits and misses to add classes of hit and miss for assets and for detection
+  // 3. draggable ships?
+  // 5. turn all console logs into alerts/confirms
+  // 6. reveal ships when they are destroyed for both teams 
   // 7. Game Ending programming (quit resets this and normal states without reloading whole page?)
   // 8. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
   // 9. Add sound effects, add music, add a mute button for effects and a mute for sound
@@ -35,7 +21,6 @@ function init() {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-
     // ~~~~~~~~~~~~    CODING BEGINS HERE   ~~~~~~~~~~~~~~~~
   
   // BASIC GLOBAL GAME CONDITION VARIABLES
@@ -46,6 +31,7 @@ function init() {
   // HTML ELEMENT REFERENCES
   const startB = document.getElementById('start')
   const rotateB = document.getElementById('rotate')
+  const gridSel = document.querySelector('.gridP')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
   const disGssGrd = document.querySelector('.grid-wrapper')
   const fightB = document.getElementById('fight')
@@ -429,9 +415,7 @@ function init() {
   // easy difficulty is simply random guess fed into computerGuess (easy??)
   // medium difficulty is random guess fed into computerguess + search and destroy functionality
   // hard difficulty is efficient random guessing + search and destroy functionality 
-  //A COUPLE MORE AI TWEAKS POSSIBLE
-  //    iv. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
-  //    v. cleaning up isolated guesses now
+
     // *** need to change player and computer guessing to change targets class to hit or miss ***
 
   // *** implement this only if I have finised my other styling work ***
@@ -451,16 +435,67 @@ function init() {
   let huntingLocations = []
   let hitStreak = 1
   let cGuesses = 0
-  
+  let comeBack = []
+  let oriPair1= []
+  let lastPair2= []
+
+  function isIsolated(compGuessLAdv){
+    // this should RETURN TRUE if NSEW are all full of a guess/hit or off the edge
+    
+    let edgesS = 0
+    let cgNum = Number(compGuessLAdv.slice(-2))
+    
+    let neverS = 'gridP' + doubleDigits(cgNum-10)
+    let eatS = 'gridP' + doubleDigits(cgNum+1)
+    let shreddedS = 'gridP' + doubleDigits(cgNum+10)
+    let wheatS = 'gridP' + doubleDigits(cgNum-1)   
+    
+    let guessElemN = document.getElementById(neverS)
+    let guessElemS = document.getElementById(shreddedS)
+    let guessElemE = document.getElementById(eatS)
+    let guessElemW = document.getElementById(wheatS)
+
+    if( Math.floor(cgNum/10) === 0 || guessElemN.style.backgroundColor === 'grey'){ // has and EDGE NORTH OR hit/miss NORTH
+      edgesS++
+    }
+    if( Math.floor(cgNum/10) === 9 || guessElemS.style.backgroundColor === 'grey'){ // has and EDGE SOUTH OR hit/miss SOUTH
+      edgesS++
+    }
+    if(Math.floor(cgNum+1)%10 === 0 || guessElemE.style.backgroundColor === 'grey'){ // has and EDGE EAST OR hit/miss EAST
+      edgesS++
+    }
+    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.style.backgroundColor === 'grey'){ // has and EDGE WEST OR hit/miss WEST
+      edgesS++
+    }
+    
+    if (edgesS === 4){
+      return true
+    } else {
+      return false
+    }
+  }
+
   function searchAndDestroy(hunting, guessStatus){
     // console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
+
     if (hunting === true && guessStatus === 'hit'){
-      // console.log('hit streak before increment', hitStreak)
+      lastPair2 = [ document.getElementById(lastHitLocation).className, lastHitLocation]
+      console.log(lastPair2, 'last Pair2 assigned here')
       hitStreak++
-      // console.log(hitStreak + ' hit streak achieved, now modify array editing behavior')
+    }
+
+    // *** TWO SHIPS HIT AI ***
+    // so, if I initially hit while not hunting, then hit again while hunting,
+    // they should both be stored as two items in an array, first is class second is location
+    // the classes will be identical if you're hitting the same ship, nothing happens
+    // if they're differen't classes, two different ships, when you destroy a ship,
+    // you'll come back to the first one you hit and try to finish it off
+    if (oriPair1.length === 2 && lastPair2.length === 2 && oriPair1[0] != lastPair2[0]){
+      console.log((oriPair1[0] != lastPair2[0]), oriPair1, lastPair2, 'comparison of the two pairs')
+      comeBack = oriPair1
+      console.log(comeBack, 'comeBack')
     }
     // CODE THAT ACTUALLY DOES WORK
-    // console.log(lastHitLocation, 'last hit location relevant to arrays produced in next few lines')
     let hitNumber = Number(lastHitLocation.slice(-2))
     let oriNumber = Number(originalHitLocation.slice(-2))
     let northArray1 = []
@@ -532,6 +567,10 @@ function init() {
     let allFour = [northArray2, southArray2, eastArray2, westArray2]
 
     if (hunting === false && guessStatus === 'hit'){
+      
+      oriPair1 = [ document.getElementById(lastHitLocation).className, lastHitLocation]
+      console.log(oriPair1, 'oriPair1 assigned here within first if clause')
+      
       if ( getRandomInt(2) === 1){
         if(Number(lastHitLocation.slice(-1))> 0){
           huntingLocations.push(wheat)
@@ -573,26 +612,29 @@ function init() {
 
     } else if (hunting === true && guessStatus === 'hit' && hitStreak === 2){ // this is for a hit, after a hit, but only 2 in a row
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
-      // console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this -> ' + Number(originalHitLocation.slice(-2)) + originalHitLocation + ' should be ' + numRel)
-
-      // THIS NEEDS A REFACTOR FOR MULTIPLE HITS IN A LONG LINE GETTING FAR AWAY FROM THE OG HIT
-      // WHAT SHOULD BE DONE? 
+      if (oriPair1[0] != lastPair2[0]){
+        if(Math.abs(numRel)=== 10){
+          numRel = 1
+        } else {
+          numRel = 10
+        }
+      }
       if (Math.abs(numRel)=== 10){ // VERTICAL GENERATION
         if (numRel === 10) { // check south first
           huntingLocations = northArray2.concat(southArray2)
-          console.log(southArray2, 'checking south first', huntingLocations, 'should be a large array of potential targets only vertical')
+          // console.log(southArray2, 'checking south first', huntingLocations, 'should be a large array of potential targets only vertical')
         } else { // check north first
           huntingLocations = southArray2.concat(northArray2)
-          console.log(northArray2, 'checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
+          // console.log(northArray2, 'checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
         }
       } else { // HORIZONTAL GENERATION
         if (numRel === 1) { // check east first
-          console.log(westArray2, 'checking this as there may be a problem here')
+          // console.log(westArray2, 'checking this as there may be a problem here')
           huntingLocations = westArray2.concat(eastArray2)
-          console.log(eastArray2, 'checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
+          // console.log(eastArray2, 'checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
         } else { // check west first
           huntingLocations = eastArray2.concat(westArray2)
-          console.log(westArray2, 'checking west first', huntingLocations, 'should be a large array of potential targets only horizontal')
+          // console.log(westArray2, 'checking west first', huntingLocations, 'should be a large array of potential targets only horizontal')
         }
       }
 
@@ -601,7 +643,7 @@ function init() {
       
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
-        console.log(huntingGuess, 'hunting guess after array construction')
+        // console.log(huntingGuess, 'hunting guess after array construction')
       } else {
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
@@ -625,8 +667,8 @@ function init() {
       // I've hit twice after no streak -> which triggers building of that array
       // now I want to filter out of hunting locations what is in eastArray2 if I missed in east array direction etc
       let huntingMissFilt = []
-      console.log(huntingLocations, ' this is what I will be cleaning')
-      console.log(huntingGuess, lastHitLocation, ' this is the current guess')
+      // console.log(huntingLocations, ' this is what I will be cleaning')
+      // console.log(huntingGuess, lastHitLocation, ' this is the current guess')
 
       for (let i = 0; i<allFour.length;i++){
         if (allFour[i].includes(huntingGuess)){
@@ -634,7 +676,7 @@ function init() {
         }
       }
       huntingLocations = huntingMissFilt
-      console.log(huntingLocations, 'hunting locations filtered after 2 hits and a miss, ditching the further out misses')
+      // console.log(huntingLocations, 'hunting locations filtered after 2 hits and a miss, ditching the further out misses')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       huntingLocations = huntingLocationsFiltered
 
@@ -668,44 +710,6 @@ function init() {
 
     if (hunting === false){
       originalHitLocation = lastHitLocation
-    }
-  }
-
-  function isIsolated(compGuessLAdv){
-    // this should RETURN TRUE if NSEW are all full of a guess/hit or off the edge
-    
-    let edgesS = 0
-    let cgNum = Number(compGuessLAdv.slice(-2))
-    
-    let neverS = 'gridP' + doubleDigits(cgNum-10)
-    let eatS = 'gridP' + doubleDigits(cgNum+1)
-    let shreddedS = 'gridP' + doubleDigits(cgNum+10)
-    let wheatS = 'gridP' + doubleDigits(cgNum-1)   
-    
-    let guessElemN = document.getElementById(neverS)
-    let guessElemS = document.getElementById(shreddedS)
-    let guessElemE = document.getElementById(eatS)
-    let guessElemW = document.getElementById(wheatS)
-
-    if( Math.floor(cgNum/10) === 0 || guessElemN.style.backgroundColor != ''){ // has and EDGE NORTH OR hit/miss NORTH
-      edgesS++
-    }
-    if( Math.floor(cgNum/10) === 9 || guessElemS.style.backgroundColor != ''){ // has and EDGE SOUTH OR hit/miss SOUTH
-      edgesS++
-    }
-    if(Math.floor(cgNum+1)%10 === 0 || guessElemE.style.backgroundColor != ''){ // has and EDGE EAST OR hit/miss EAST
-      edgesS++
-    }
-    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.style.backgroundColor != ''){ // has and EDGE WEST OR hit/miss WEST
-      edgesS++
-    }
-    
-    console.log('isIsolated was run!! ' + compGuessLAdv, 'guess location at time of run?!')
-    if (edgesS === 4){
-      console.log('THE SQUARE WAS ISOLATED!!!!!')
-      return true
-    } else {
-      return false
     }
   }
 
@@ -750,9 +754,7 @@ function init() {
       if (hunting){ // if hunting is true, the last guess was a hit, and we will hunt until we destroy the ship hit
         lessNumbers.splice(indexHunting, 1)
         guessLoc = document.getElementById(huntingId)
-        // console.log(huntingId, 'huntingID', guessLoc, 'this was null in a bug instance, keep an eye out')
         guessClass = guessLoc.className
-        // console.log(guessClass, 'this is what failed to be created')
       } else { // procure a new advanced guess, whether initial, or secondary after isolation determined
         // While loops are scary, but! don't want to select any isolated squares ever. Waste of time for the AI. 
         loopBreaker = 0
@@ -802,8 +804,13 @@ function init() {
           scoreP -= 100
           damagedShip.destroyed = true
           destroyedShipsP.push(guessClass)
+          // THIS ENDS THE GAME
+          if (destroyedShipsP.length === 5){
+            console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " THE COMPUTER TOOK " + cGuesses + " TO WIN.")
+            winner = 'computer'
+          }
+
           // add a destroyed class here to the squares of the ship, so that CSS can display ship (change opacity) and maybe desroyed ship image loaded
-          
           //A DESTROYED SHIP ENDS HUNTING AND RE-INITIALIZES IT
           if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
             hunting = false // the hunting flag should be turned off
@@ -812,12 +819,17 @@ function init() {
             huntingLocations = []
             hitStreak = 1
           }
-
-          // THIS ENDS THE GAME
-          if (destroyedShipsP.length === 5){
-            console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " THE COMPUTER TOOK " + cGuesses + " TO WIN.")
-            winner = 'computer'
+          
+          // *** COMEBACK TWO SHIP CODE
+          if (comeBack.length > 0){
+            console.log('COMEBACK TO ME CODE RAN HERE')
+            lastHitLocation = comeBack[1]
+            console.log(lastHitLocation, 'last hit', comeBack[1], 'comeback item one(not item zero)')
+            searchAndDestroy(false, 'hit')
+            comeBack = []
           }
+
+
         } else { // IF A SHIP IS JUST DAMAGED BY A SHIP
           if (damagedShip.damage === (damagedShip.lengthS-1)){
             warning = " It is critically damaged!"
@@ -931,6 +943,7 @@ function init() {
       rotateB.disabled = false
       shipSelector.disabled = false
       fightB.disabled = false
+      gridSel.style.display = 'flex'
       console.log('Begin Placement Phase')
 
       allShips.forEach(ship => {
@@ -943,7 +956,8 @@ function init() {
         }
         })
       
-    } else {
+    
+      } else {
       console.log('choose a difficulty level first')
     }
   }
