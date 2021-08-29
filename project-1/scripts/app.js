@@ -1,6 +1,10 @@
 function init() {
 
-    
+    let gN = [76, 87, 81, 58, 90, 29, 52, 23, 24, 22, 13, 33, 43, 27, 67, 34, 74, 78, 38, 41, 42, 40]
+    let toFilt = ["HgridP44", "HgridP43", "HgridP42"]
+    let filtered1 = toFilt.filter(num => !gN.includes(Number(num.slice(-2))))
+    toFilt = filtered1
+    console.log(toFilt)
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
   // *** REQUIRED FOR MVP ***  
@@ -605,17 +609,18 @@ function init() {
       }
 
       console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
-      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Numbers(loc.slice(-2))))
       console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
-      huntingLocations = huntingLocationsFiltered
       console.log(huntingLocations, 'filtered hunting locations')
+
+      huntingLocations = huntingLocationsFiltered
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
     
     } else if (hunting === true && guessStatus === 'hit' && hitStreak > 2){
 
       console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
-      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
       console.log(huntingLocations, 'filtered hunting locations')
@@ -631,10 +636,11 @@ function init() {
       hitStreak = 1
 
       console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
-      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
       console.log(huntingLocations, 'filtered hunting locations')
+
       huntingLocations = huntingLocationsFiltered
       console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
