@@ -1,5 +1,6 @@
 function init() {
 
+    
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
   // *** REQUIRED FOR MVP ***  
@@ -581,47 +582,46 @@ function init() {
       console.log(huntingGuess, 'this popped after hunting false, status hit (first hit on a ship by the computer)')
     } else if (hunting === true && guessStatus === 'hit' && hitStreak === 2){ // this is for a hit, after a hit, but only 2 in a row
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
-      console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this ->' + Number(originalHitLocation.slice(-2)) + originalHitLocation + 'should be' + numRel)
+      console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this -> ' + Number(originalHitLocation.slice(-2)) + originalHitLocation + ' should be ' + numRel)
 
       // THIS NEEDS A REFACTOR FOR MULTIPLE HITS IN A LONG LINE GETTING FAR AWAY FROM THE OG HIT
       // WHAT SHOULD BE DONE? 
       if (Math.abs(numRel)=== 10){ // VERTICAL GENERATION
         if (numRel === 10) { // check south first
-          let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
-          let midArrayV = huntingVertical.concat(southArray2)
-          huntingLocations = northArray2.concat(midArrayV)
+          huntingLocations = northArray2.concat(southArray2)
           console.log(southArray2, 'checking south first', huntingLocations, 'should be a large array of potential targets only vertical')
         } else { // check north first
-          let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
-          let midArrayV = huntingVertical.concat(northArray2)
-          huntingLocations = southArray2.concat(midArrayV)
+          huntingLocations = southArray2.concat(northArray2)
           console.log(northArray2, 'checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
         }
       } else { // HORIZONTAL GENERATION
         if (numRel === 1) { // check east first
-          let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
-          let midArrayH = huntingHorizontal.concat(eastArray2)
-          huntingLocations = westArray2.concat(midArrayH)
+          huntingLocations = westArray2.concat(eastArray2)
           console.log(eastArray2, 'checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
         } else { // check west first
-          let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
-          let midArrayH = huntingHorizontal.concat(westArray2)
-          huntingLocations = eastArray2.concat(midArrayH)
+          huntingLocations = eastArray2.concat(westArray2)
           console.log(westArray2, 'checking west first', huntingLocations, 'should be a large array of potential targets only horizontal')
         }
       }
-      // console.log(huntingLocations, 'unfiltered hunting locations')
+
+      console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
-      // console.log(huntingLocations, 'filtered hunting locations')
+      console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
     
     } else if (hunting === true && guessStatus === 'hit' && hitStreak > 2){
-      // console.log(huntingLocations, 'unfiltered hunting locations')
+
+      console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
-      // console.log(huntingLocations, 'filtered hunting locations')
+      console.log(huntingLocations, 'filtered hunting locations')
+
+      huntingLocations = huntingLocationsFiltered
+      console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
     } else if (hunting === true && guessStatus === 'miss'){
       if (hitStreak >= 2){
@@ -629,11 +629,16 @@ function init() {
         console.log(huntingLocations, 'array at time of miss after streak')
       }
       hitStreak = 1
-      // console.log(huntingLocations, 'unfiltered hunting locations')
+
+      console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
-      // console.log(huntingLocations, 'filtered hunting locations')
+      console.log(huntingLocations, 'filtered hunting locations')
+      huntingLocations = huntingLocationsFiltered
+      console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
+
     }
 
     if (hunting === false){
@@ -646,7 +651,6 @@ function init() {
     let guessLoc = ''
     let guessClass = ''
     let warning = ''
-    
     if (lessNumbers.length === 0){
       lessNumbers = backUpNumbers
     }
@@ -724,7 +728,7 @@ function init() {
             lastHitLocation = '' //the hit location (original hit) should be wiped
             originalHitLocation = ''
             huntingLocations = []
-            hitStreak = false
+            hitStreak = 1
           }
 
           // THIS ENDS THE GAME
@@ -739,7 +743,7 @@ function init() {
           console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
     } else if (guessLoc.style.backgroundColor === ''){ // IF A COMPUTER'S GUESS MISSES A SHIP
-      console.log('They missed us Admiral!')
+      console.log('They missed us Admiral!' + guessLoc.id)
       if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
         searchAndDestroy(hunting, 'miss')
       }
@@ -768,16 +772,16 @@ function init() {
           winner = 'player'
         } else {
           computerGuess()
-          // computerGuess()
-          // computerGuess()
-          // computerGuess()
+          computerGuess()
+          computerGuess()
+          computerGuess()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
         computerGuess()
-        // computerGuess()
-        // computerGuess()
-        // computerGuess()
+        computerGuess()
+        computerGuess()
+        computerGuess()
       }
     } else if (eT.style.backgroundColor === 'red'){
       console.log('We already hit here. Choose new coordinates Admiral...')
@@ -785,9 +789,9 @@ function init() {
       console.log('We missed Admiral!')
       eT.style.backgroundColor = 'grey'
       computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
     } else if (eT.style.backgroundColor === 'grey'){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
