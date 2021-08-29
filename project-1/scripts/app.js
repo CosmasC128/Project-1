@@ -451,58 +451,97 @@ function init() {
   let hunting = false
   let lastHitLocation = ''
   let originalHitLocation = ''
-  let huntingGuess = 0
-  const huntingLocations = []
-  let huntingCounter = 0
-
+  let huntingGuess = ''
+  let huntingLocations = []
+  let oldHuntingGuesses = []
   function searchAndDestroy(hunting, guessStatus){
-
     console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
-
+    
     // CODE THAT ACTUALLY DOES WORK
+    // need to re-factor this to account for which is actually above or below
+    // since N is always guessed before south, we can assume we have to use originalNumber for southern location
+    // same with west always being second, so use original number for western location
+    
     let hitNumber = Number(lastHitLocation.slice(-2))
-    let oriNum = Number(originalHitLocation.slice(-2))
+    let oriNumber = Number(originalHitLocation.slice(-2))
     let northArray1 = []
     let southArray1 = []
     let eastArray1 = []
     let westArray1 = []
-    for (let i=0;i<=Math.floor(hitNumber/10);i++){ // north
-      if (i<=3){
-      northArray1.push('VgridP' + String(hitNumber-(i*10)))
+    
+
+    // THIS NEEDS BIG REWORK TO NOT GO OFF EDGES AND NOT PUSH SPOTS ALREADY GUESSED
+    // should be bigly improved
+    if(hitNumber < oriNumber){
+      for (let i=0;i<=Math.floor((hitNumber/10)-1);i++){ // north 2nd hit is more north
+        if (i<3){
+        northArray1.push('VgridP' + doubleDigits(hitNumber-10-(i*10)))
+        }
+      }
+    } else {
+      for (let i=0;i<=Math.floor((oriNumber/10)-1);i++){ // north original hit is more north
+        if (i<3){
+        northArray1.push('VgridP' + doubleDigits(oriNumber-10-(i*10)))
+        }
       }
     }
-    for (let i=0;i<=Math.floor((100-hitNumber)/10);i++){ // south
-      if (i<=3){
-        southArray1.push('VgridP' + String(hitNumber+(i*10)))
+    if(oriNumber < hitNumber){
+      for (let i=0;i<=Math.floor(((100-hitNumber)/10)-1);i++){ // south if 2nd hit is more south
+        if (i<3){
+          southArray1.push('VgridP' + doubleDigits(hitNumber+10+(i*10)))
+        }
+      }
+    } else {
+      for (let i=0;i<=Math.floor(((100-oriNumber)/10)-1);i++){ // south if original guess is more south
+        if (i<3){
+          southArray1.push('VgridP' + doubleDigits(oriNumber+10+(i*10)))
+        }
       }
     }
-    for (let i=0;i<=(Number(lastHitLocation.slice(-1)));i++){ // east
-      if (i<=3){
-        eastArray1.push('VgridP' + String(hitNumber+i))
+    if(hitNumber > oriNumber){ 
+      for (let i=0;i<=(Number(lastHitLocation.slice(-1))-1);i++){ // east if 2nd hit is more east
+        if (i<3){
+          eastArray1.push('VgridP' + doubleDigits(hitNumber+1+i))
+        }
+      }
+    } else {
+      for (let i=0;i<=(Number(originalHitLocation.slice(-1))-1);i++){ // east if original hit is more east
+        if (i<3){
+          eastArray1.push('VgridP' + doubleDigits(oriNumber+1+i))
+        }
       }
     }
-    for (let i=0;i<=(Number(lastHitLocation.slice(-1)));i++){ // west
-      if (i<=3){
-        westArray.push('VgridP' + String(hitNumber-i))
+    if(hitNumber < oriNumber){
+      for (let i=0;i<=(Number(lastHitLocation.slice(-1))-1);i++){ // west if 2nd hit is more west
+        if (i<3){
+          westArray1.push('VgridP' + doubleDigits(hitNumber-1-i))
+        }
+      }
+    } else {
+      for (let i=0;i<=(Number(originalHitLocation.slice(-1))-1);i++){ // west if original hit is more west
+        if (i<3){
+          westArray1.push('VgridP' + doubleDigits(oriNumber-1-i))
+        }
       }
     }
+
+
+
+
 
     let northArray2 = northArray1.reverse()
     let southArray2 = southArray1.reverse()
     let eastArray2 = eastArray1.reverse()
     let westArray2 = westArray1.reverse()
-
-    // validation code for not above, not below, not off the left or right edge
-    //series of if statements that only add surrounding squares if we aren't on the edge
-    // and if they weren't already guessed before ... this may not be a problem, will keep an eye on it
-    // let holdingArray = []
     let never = 'V' + 'gridP' + doubleDigits(hitNumber-10)
     let eat = 'H'+'gridP' + doubleDigits(hitNumber+1)
     let shredded = 'V'+'gridP' + doubleDigits(hitNumber+10)
     let wheat = 'H'+'gridP' + doubleDigits(hitNumber-1)    
+    //series of if statements that only add surrounding squares if we aren't on the edge
+    // and if they weren't already guessed before ... this may not be a problem, will keep an eye on it
 
     if (hunting === false && guessStatus === 'hit'){
-      if (getRandomInt(2) = 1){
+      if ( getRandomInt(2) === 1){
         if(Number(lastHitLocation.slice(-1))> 0){
           huntingLocations.push(wheat)
         }
@@ -534,26 +573,43 @@ function init() {
     } else if (hunting === true && guessStatus === 'hit'){ // this is for a hit, after a hit
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
       console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this ->' + Number(originalHitLocation.slice(-2)) + originalHitLocation + 'should be' + numRel)
-      // here compare the last hit to the most recent hit, numerically it will give you a relation and then you can choose to only add a before and after
-      // and you can pop the east and west or north and south from the previous one
-      if (Math.abs(numRel)=== 10){
-        //ship is vertical remove EW guesses and shoot north and south alternating until the ship is destroyed or you miss, then only do the other side
-        console.log("we've reached the cleaning stage (vertical)", huntingLocations)
-        let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
-        let midArrayV = huntingVertical.concat(northArray2)
-        huntingLocations = southArray2.concat(midArrayV)
-        console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only vertical')
-      } else {
-        console.log("we've reached the cleaning stage (horizontal)", huntingLocations)
-        let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
-        let midArrayH = huntingHorizontal.concat(eastArray2)
-        huntingLocations = westArray2.concat(midArrayH)
-        console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only vertical')
+
+      // THIS NEEDS A SLIGHT TWEAK FOR GUESSING UP OR DOWN BASED ON WHETHER THE 'DUAL' HITS ARE TRACKING SOUTH OR TRACKING NORTH
+      // IF IT'S VERTICAL POSITIVE, CHECK SOUTHERN LOCATIONS FIRST CAUSE THAT MEANS THE ORIGINAL HIT IS MORE NORTH AND NUMERICALLY SMALLER ON THE BOARD
+      // IF IT'S VERTICAL NEGATIVE CHECK SOUTHERN ONES FIRST
+      if (Math.abs(numRel)=== 10){ // VERTICAL GENERATION
+        if (numRel === 10) { // check south first
+          let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
+          let midArrayV = huntingVertical.concat(southArray2)
+          huntingLocations = northArray2.concat(midArrayV)
+          console.log('checking south first', huntingLocations, 'should be a large array of potential targets only vertical')
+        } else { // check north first
+          let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
+          let midArrayV = huntingVertical.concat(northArray2)
+          huntingLocations = southArray2.concat(midArrayV)
+          console.log('checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
+        }
+      } else { // HORIZONTAL GENERATION
+        if (numRel === 1) { // check east first
+          let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
+          let midArrayH = huntingHorizontal.concat(eastArray2)
+          huntingLocations = westArray2.concat(midArrayH)
+          console.log('checking east first', huntingLocations, 'should be a large array of potential targets only vertical')
+        } else { // check west first
+          let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
+          let midArrayH = huntingHorizontal.concat(westArray2)
+          huntingLocations = eastArray2.concat(midArrayH)
+          console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only vertical')
+        }
       }
-      // can make an array of new locations around a new hit, and only append them, if they are not already in the array, and they are edge validated
+      
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
+    
+    } else if (hunting === true && guessStatus === 'miss'){
+      huntingGuess = huntingLocations.pop()
     }
+
     if (hunting === false){
       originalHitLocation = lastHitLocation
     }
@@ -583,7 +639,6 @@ function init() {
     // huntingGuess
     let indexHunting = lessNumbers.indexOf(Number(huntingGuess))
     let huntingId = huntingGuess.slice(1)
-    console.log(huntingGuess, 'hunting guess', huntingId, 'hunting id', 'confirmation of proper slicing/cleaning behavior')
 
     // SELECTION OF INITIAL GUESS BASED ON DIFFICULTY
     if (difficultyLevel === 'easy' || difficultyLevel === 'medium'){ // easy guess tree
