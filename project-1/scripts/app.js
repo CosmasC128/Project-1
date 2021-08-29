@@ -463,14 +463,18 @@ function init() {
   let originalHitLocation = ''
   let huntingGuess = ''
   let huntingLocations = []
-  let hitStreak = false
+  let hitStreak = 1
   
   
   function searchAndDestroy(hunting, guessStatus){
     console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
-    
+    if (hunting === true && guessStatus === 'hit'){
+      console.log('hit streak before increment', hitStreak)
+      hitStreak++
+      console.log(hitStreak + ' hit streak achieved, now modify array editing behavior')
+    }
     // CODE THAT ACTUALLY DOES WORK
-    
+    console.log(lastHitLocation, 'last hit location relevant to arrays produced in next few lines')
     let hitNumber = Number(lastHitLocation.slice(-2))
     let oriNumber = Number(originalHitLocation.slice(-2))
     let northArray1 = []
@@ -479,54 +483,54 @@ function init() {
     let westArray1 = []
     
     if(hitNumber < oriNumber){
-      for (let i=0;i<=Math.floor((hitNumber/10)-1);i++){ // north 2nd hit is more north
+      for (let i=0;i<Math.floor((hitNumber/10));i++){ // north 2nd hit is more north
         if (i<3){
         northArray1.push('VgridP' + doubleDigits(hitNumber-10-(i*10)))
         }
       }
     } else {
-      for (let i=0;i<=Math.floor((oriNumber/10)-1);i++){ // north original hit is more north
+      for (let i=0;i<Math.floor((oriNumber/10));i++){ // north original hit is more north
         if (i<3){
         northArray1.push('VgridP' + doubleDigits(oriNumber-10-(i*10)))
         }
       }
     }
     if(oriNumber < hitNumber){
-      for (let i=0;i<=Math.floor(((100-hitNumber)/10)-1);i++){ // south if 2nd hit is more south
+      for (let i=0;i<Math.floor(((100-hitNumber)/10));i++){ // south if 2nd hit is more south
         if (i<3){
           southArray1.push('VgridP' + doubleDigits(hitNumber+10+(i*10)))
         }
       }
     } else {
-      for (let i=0;i<=Math.floor(((100-oriNumber)/10)-1);i++){ // south if original guess is more south
+      for (let i=0;i<Math.floor(((100-oriNumber)/10));i++){ // south if original guess is more south
         if (i<3){
           southArray1.push('VgridP' + doubleDigits(oriNumber+10+(i*10)))
         }
       }
     }
     if(hitNumber > oriNumber){ 
-      for (let i=0;i<=(Number(lastHitLocation.slice(-1))-1);i++){ // east if 2nd hit is more east
+      for (let i=0;i<9-(Number(lastHitLocation.slice(-1)));i++){ // east if 2nd hit is more east
         if (i<3){
-          eastArray1.push('VgridP' + doubleDigits(hitNumber+1+i))
+          eastArray1.push('HgridP' + doubleDigits(hitNumber+1+i))
         }
       }
     } else {
-      for (let i=0;i<=(Number(originalHitLocation.slice(-1))-1);i++){ // east if original hit is more east
+      for (let i=0;i<9-(Number(originalHitLocation.slice(-1)));i++){ // east if original hit is more east
         if (i<3){
-          eastArray1.push('VgridP' + doubleDigits(oriNumber+1+i))
+          eastArray1.push('HgridP' + doubleDigits(oriNumber+1+i))
         }
       }
     }
     if(hitNumber < oriNumber){
-      for (let i=0;i<=(Number(lastHitLocation.slice(-1))-1);i++){ // west if 2nd hit is more west
+      for (let i=0;i<(Number(lastHitLocation.slice(-1)));i++){ // west if 2nd hit is more west
         if (i<3){
-          westArray1.push('VgridP' + doubleDigits(hitNumber-1-i))
+          westArray1.push('HgridP' + doubleDigits(hitNumber-1-i))
         }
       }
     } else {
-      for (let i=0;i<=(Number(originalHitLocation.slice(-1))-1);i++){ // west if original hit is more west
+      for (let i=0;i<(Number(originalHitLocation.slice(-1))-1);i++){ // west if original hit is more west
         if (i<3){
-          westArray1.push('VgridP' + doubleDigits(oriNumber-1-i))
+          westArray1.push('HgridP' + doubleDigits(oriNumber-1-i))
         }
       }
     }
@@ -569,12 +573,13 @@ function init() {
           huntingLocations.push(eat)
         }
       }
-    
+      // console.log(huntingLocations, 'unfiltered hunting locations')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
-      huntingLocations = huntingLocationsFiltered 
+      huntingLocations = huntingLocationsFiltered
+      // console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting false, status hit (first hit on a ship by the computer)')
-    } else if (hunting === true && guessStatus === 'hit'){ // this is for a hit, after a hit
+    } else if (hunting === true && guessStatus === 'hit' && hitStreak === 2){ // this is for a hit, after a hit, but only 2 in a row
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
       console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this ->' + Number(originalHitLocation.slice(-2)) + originalHitLocation + 'should be' + numRel)
 
@@ -585,41 +590,49 @@ function init() {
           let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
           let midArrayV = huntingVertical.concat(southArray2)
           huntingLocations = northArray2.concat(midArrayV)
-          console.log('checking south first', huntingLocations, 'should be a large array of potential targets only vertical')
+          console.log(southArray2, 'checking south first', huntingLocations, 'should be a large array of potential targets only vertical')
         } else { // check north first
           let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
           let midArrayV = huntingVertical.concat(northArray2)
           huntingLocations = southArray2.concat(midArrayV)
-          console.log('problem somehwere here north array')
-          console.log(northArray2, 'north array')
-          console.log(southArray2, 'sourth array')
-          console.log('checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
+          console.log(northArray2, 'checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
         }
       } else { // HORIZONTAL GENERATION
         if (numRel === 1) { // check east first
           let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
           let midArrayH = huntingHorizontal.concat(eastArray2)
-          huntingLocations = westArray2.slice(0,-1).concat(midArrayH)
-          console.log('checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
+          huntingLocations = westArray2.concat(midArrayH)
+          console.log(eastArray2, 'checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
         } else { // check west first
           let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
           let midArrayH = huntingHorizontal.concat(westArray2)
           huntingLocations = eastArray2.concat(midArrayH)
-          console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only horizontal')
+          console.log(westArray2, 'checking west first', huntingLocations, 'should be a large array of potential targets only horizontal')
         }
       }
-
+      // console.log(huntingLocations, 'unfiltered hunting locations')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
       huntingLocations = huntingLocationsFiltered
+      // console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
     
-    } else if (hunting === true && guessStatus === 'miss'){
-      if (hitStreak === true){
-        console.log(huntingLocations, "need to process this properly if we have a ship we're hunting, and a miss is detected")
-      }
+    } else if (hunting === true && guessStatus === 'hit' && hitStreak > 2){
+      // console.log(huntingLocations, 'unfiltered hunting locations')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
       huntingLocations = huntingLocationsFiltered
+      // console.log(huntingLocations, 'filtered hunting locations')
+      huntingGuess = huntingLocations.pop()
+    } else if (hunting === true && guessStatus === 'miss'){
+      if (hitStreak >= 2){
+        // here I can dump similar numbers that are still in the array
+        console.log(huntingLocations, 'array at time of miss after streak')
+      }
+      hitStreak = 1
+      // console.log(huntingLocations, 'unfiltered hunting locations')
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocations = huntingLocationsFiltered
+      // console.log(huntingLocations, 'filtered hunting locations')
       huntingGuess = huntingLocations.pop()
     }
 
@@ -651,7 +664,7 @@ function init() {
     //re-assigned above by the search and destroy function
     // huntingGuess
     let indexHunting = lessNumbers.indexOf(Number(huntingGuess))
-    console.log(huntingGuess, 'hunting guess before slicing and hit processing, often errors here')
+    // console.log(huntingGuess, 'hunting guess before slicing and hit processing, often errors here')
     let huntingId = huntingGuess.slice(1)
 
     // SELECTION OF INITIAL GUESS BASED ON DIFFICULTY
@@ -679,10 +692,10 @@ function init() {
     }
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
-    console.log('all guesses come through here')
-    console.log(guessLoc.id)
+    // console.log('all guesses come through here')
+    // console.log(guessLoc.id)
     guessedNumbers.push(Number(guessLoc.id.slice(-2)))
-    console.log(guessedNumbers, 'guess numbers for all game modes')
+    // console.log(guessedNumbers, 'guess numbers for all game modes')
     if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
