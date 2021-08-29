@@ -430,24 +430,21 @@ function init() {
   // hard difficulty is efficient random guessing + search and destroy functionality 
   //A COUPLE MORE AI TWEAKS POSSIBLE
   //    iv. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
-  //    v. 
+  //    v. cleaning up isolated guesses now
+    // *** need to change player and computer guessing to change targets class to hit or miss ***
 
-  // *** need to change player and computer guessing to change targets class to hit or miss ***
-  // *** need to make sure my computer guess function insertions are correct
-  // then feedback and styling comes from those classes
-  // so first I have to add those classes
-  
-  // SEARCH AND DESTROY --- THE CRUX FOR MVP AND ESSENTIALLY FOR MEDIUM AND HARD DIFFICULTIES
-  //        a) hunting true/false variable b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
-  // I need global variables outside all the functions so they can be updated and then reference again in a new loop through
-  
-  // MAJOR PROBLEM RIGHT NOW IS VERTICAL AND HORIZONTAL EXPANDING GUESSES CAN OVERLAP WITH PREVIOUS HITS OR MISSES.
-  // NEED TO COHESIVELY SLICE ALL GUESSES, WHETHER ADVANCED RANDOM GUESSES OR HUNTING GUESSES OUT OF THE
-  // TOTAL LIST OF REMAINING POSSIBLE SPOTS. BACKUP / LESSNUMBERS HOLD THESE.
-  // WHEN EXPANSIVE HOR/VERT TRIES TO FIND THINGS ITERATIVELY OUTWARDS, JUST DO A CHECK, IF IN ALREADY GUESSED -> SKIP IT
-  // THIS WILL BE THE LAST REFACTOR I DO FOR THE AI
+  // *** implement this only if I have finised my other styling work ***
+  //    vii. NEEDS ONE MORE REFACTOR RE-HITS A 2ND SHIP WHILE HITTING THE FIRST SHIP
+  //        aka, remember if you hit a 2nd ship, and if you destroy a ship, feed right back into destroying
+  //        secondary ship you hit. Should be implemented after ship destruction (feedback new start location)
+  //        if (2nd ship hit === true)  last hit location = 2ndshipLocation, run search and destroy (false/'hit')
+  // if you hit a ship store the class in a variable that resets on destroy, or next hit
+  // if you get a next hit and the classes don't match, load 2nd classes cooridinates into 2nd ship Location
+  // and toggle 2nd ship hit == true
 
-  // NEEDS ONE MORE REFACTOR RE-HITS A 2ND SHIP WHILE HITTING THE FIRST SHIP
+  
+
+  // 
 
   // SEARCH AND DESTROY GLOBAL CONSTANTS --- FEED INTO SEARCH AND DESTROY AND INTO COMPUTER GUESS
   let hunting = false
@@ -567,7 +564,6 @@ function init() {
 
       }
 
-
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       huntingLocations = huntingLocationsFiltered
 
@@ -630,21 +626,17 @@ function init() {
       //here assumption is I've made the horizontal or vertical array,
       // I've hit twice after no streak -> which triggers building of that array
       // now I want to filter out of hunting locations what is in eastArray2 if I missed in east array direction etc
-
+      let huntingMissFilt = []
       console.log(huntingLocations, ' this is what I will be cleaning')
       console.log(huntingGuess, lastHitLocation, ' this is the current guess')
-      console.log(northArray2, southArray2, eastArray2, westArray2, 'these are the arrays up to this point N S E W')
 
       for (let i = 0; i<allFour.length;i++){
-        console.log(i)
-        if (i.includes(huntingGuess)){
-          console.log(i)
-          let huntingMissFilt = huntingLocations.filter(loc=> !i.includes(loc))
-          
-          console.log(huntingMissFilt, 'hunting locations filtered after 2 hits and a miss, ditching the further out misses [no actual reassignment committed yet]')
+        if (allFour[i].includes(huntingGuess)){
+          huntingMissFilt = huntingLocations.filter(loc=> !allFour[i].includes(loc))
         }
       }
-
+      huntingLocations = huntingMissFilt
+      console.log(huntingLocations, 'hunting locations filtered after 2 hits and a miss, ditching the further out misses')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       huntingLocations = huntingLocationsFiltered
 
@@ -681,12 +673,37 @@ function init() {
     }
   }
 
+  // isIsolated(compGuessLAdv){
+  //   // this should RETURN TRUE if NSEW are all full of a guess/hit or off the edge
+  //   let never = 'V' + 'gridP' + doubleDigits(hitNumber-10)
+  //   let eat = 'H'+'gridP' + doubleDigits(hitNumber+1)
+  //   let shredded = 'V'+'gridP' + doubleDigits(hitNumber+10)
+  //   let wheat = 'H'+'gridP' + doubleDigits(hitNumber-1)   
+
+  //   if ( getRandomInt(2) === 1){
+  //     if(Number(lastHitLocation.slice(-1))> 0){
+  //       huntingLocations.push(wheat)
+  //     }
+  //     if(Number(lastHitLocation.slice(-1))< 9){
+  //       huntingLocations.push(eat)
+  //     }
+  //     if (Math.floor(hitNumber/10) < 9){
+  //       huntingLocations.push(shredded)
+  //     }
+  //     if (Math.floor(hitNumber/10) > 0){
+  //       huntingLocations.push(never)
+  //     }
+
+  //     return TRUE OR FALSE
+  // }
+
   function computerGuess(){
     // A FEW INITIALIZATIONS
     cGuesses++
     let guessLoc = ''
     let guessClass = ''
     let warning = ''
+    let loopBreaker = 0
     if (lessNumbers.length === 0){
       lessNumbers = backUpNumbers
     }
@@ -707,7 +724,8 @@ function init() {
     // console.log(huntingGuess, 'hunting guess before slicing and hit processing, often errors here')
     let huntingId = huntingGuess.slice(1)
 
-    // SELECTION OF INITIAL GUESS BASED ON DIFFICULTY
+
+    // ~~~~~~~~   SELECTION OF INITIAL GUESS BASED ON DIFFICULTY   ~~~~~~~~
     if (difficultyLevel === 'easy' || difficultyLevel === 'medium'){ // easy guess tree
       if (hunting){ // if hunting is true, the last guess was a hit, and we will hunt until we destroy the ship hit
         lessNumbers.splice(indexHunting, 1)
@@ -723,19 +741,32 @@ function init() {
         lessNumbers.splice(indexHunting, 1)
         guessLoc = document.getElementById(huntingId)
         guessClass = guessLoc.className
-      } else { // procure a new advanced guess and eliminate it from the remaining guesses
-        lessNumbers.splice(indexGuessAdv, 1)
-        guessLoc = document.getElementById(compGuessLAdv)
-        guessClass = guessLoc.className
-      }
+      } else { // procure a new advanced guess, whether initial, or secondary after isolation determined
+        // While loops are scary, but! don't want to select any isolated squares ever. Waste of time for the AI. 
+        loopBreaker = 0
+        if (isIsolated(compGuessLAdv) === true) { // back up advanced guess if first one generated was isolated
+          while (loopBreaker < 5 && isIsolated(compGuessLAdv) === true){
+          // if the guess is isolated, roll another new random number off remaining numbers
+          // then also removed the isolated number, and produce new guess variables for
+          numGuessAdv = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+          indexGuessAdv = lessNumbers.indexOf(Number(numGuessAdv))
+          compGuessLAdv = 'gridP' + numGuessAdv
+          lessNumbers.splice(indexGuessAdv, 1)
+          guessLoc = document.getElementById(compGuessLAdv)
+          guessClass = guessLoc.className
+          loopBreaker++
+          }
+        } else{ // first advanced random guess is NOT isolated - should be standard on hard difficulty
+          lessNumbers.splice(indexGuessAdv, 1)
+          guessLoc = document.getElementById(compGuessLAdv)
+          guessClass = guessLoc.className
+        }
 
+      }
     }
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
-    // console.log('all guesses come through here')
-    // console.log(guessLoc.id)
-    guessedNumbers.push(Number(guessLoc.id.slice(-2)))
-    // console.log(guessedNumbers, 'guess numbers for all game modes')
+    guessedNumbers.push(Number(guessLoc.id.slice(-2))) // ESSENTIAL FOR TRACKING GUESSES FOR FILTERING HUNTING LOCATION ARRAYS
     if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
@@ -789,7 +820,6 @@ function init() {
   }
 
   // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){} IMPLEMENT ONLY AFTER I'M DONE TWEAKING GAMEPLAY
-
   function playerGuess(event) {
     const eT = event.target
     const guessClass = eT.className
