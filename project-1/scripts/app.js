@@ -1,4 +1,5 @@
 function init() {
+
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
   // *** REQUIRED FOR MVP ***  
@@ -462,8 +463,9 @@ function init() {
   let originalHitLocation = ''
   let huntingGuess = ''
   let huntingLocations = []
-  let oldHuntingGuesses = []
   let hitStreak = false
+  
+  
   function searchAndDestroy(hunting, guessStatus){
     console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
     
@@ -567,12 +569,17 @@ function init() {
           huntingLocations.push(eat)
         }
       }
+    
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocations = huntingLocationsFiltered 
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting false, status hit (first hit on a ship by the computer)')
     } else if (hunting === true && guessStatus === 'hit'){ // this is for a hit, after a hit
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
       console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this ->' + Number(originalHitLocation.slice(-2)) + originalHitLocation + 'should be' + numRel)
 
+      // THIS NEEDS A REFACTOR FOR MULTIPLE HITS IN A LONG LINE GETTING FAR AWAY FROM THE OG HIT
+      // WHAT SHOULD BE DONE? 
       if (Math.abs(numRel)=== 10){ // VERTICAL GENERATION
         if (numRel === 10) { // check south first
           let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
@@ -601,7 +608,9 @@ function init() {
           console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only horizontal')
         }
       }
-      
+
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocations = huntingLocationsFiltered
       huntingGuess = huntingLocations.pop()
       console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
     
@@ -609,6 +618,8 @@ function init() {
       if (hitStreak === true){
         console.log(huntingLocations, "need to process this properly if we have a ship we're hunting, and a miss is detected")
       }
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+      huntingLocations = huntingLocationsFiltered
       huntingGuess = huntingLocations.pop()
     }
 
@@ -668,7 +679,10 @@ function init() {
     }
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
-
+    console.log('all guesses come through here')
+    console.log(guessLoc.id)
+    guessedNumbers.push(Number(guessLoc.id.slice(-2)))
+    console.log(guessedNumbers, 'guess numbers for all game modes')
     if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
