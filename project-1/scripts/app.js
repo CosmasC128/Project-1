@@ -2,17 +2,17 @@ function init() {
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
-  // *** REQUIRED FOR MVP ***  
+  //// REQUIRED FOR MVP  
   // *****DRAG AND DROP IN THE STRATEGY PHASE****
-  // *** CREATE AI GUESSING CODE ***
+  ////  CREATE AI GUESSING CODE
 
-  // WEDNESDAY:
-  // 1. AI levels of guessing loaded upon difficulty level
+  //// WEDNESDAY:
+  //// 1. AI levels of guessing loaded upon difficulty level
   ////    i. random guessing
   ////    ii. advanced guessing
-  //    iii. search and destroy after a hit
-  //        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
-  //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
+  ////    iii. search and destroy after a hit
+  ////        a) hunting true/false variabel b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
+  ////    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
   // 2. change hits and misses to add classes of hit and miss for assets and for detection
   // 3. draggable ships?
 
@@ -30,6 +30,7 @@ function init() {
   // IF TIME REMAINS:
   // X. Commenting for intelligibility
   // Y. Code Dryness / Refactoring
+  // Z. 2nd ship hit intelligence
   
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -424,7 +425,7 @@ function init() {
   }
 
   // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
-
+// *** AI FOCUSED NOTES ***
   // easy difficulty is simply random guess fed into computerGuess (easy??)
   // medium difficulty is random guess fed into computerguess + search and destroy functionality
   // hard difficulty is efficient random guessing + search and destroy functionality 
@@ -441,10 +442,6 @@ function init() {
   // if you hit a ship store the class in a variable that resets on destroy, or next hit
   // if you get a next hit and the classes don't match, load 2nd classes cooridinates into 2nd ship Location
   // and toggle 2nd ship hit == true
-
-  
-
-  // 
 
   // SEARCH AND DESTROY GLOBAL CONSTANTS --- FEED INTO SEARCH AND DESTROY AND INTO COMPUTER GUESS
   let hunting = false
@@ -590,6 +587,7 @@ function init() {
         }
       } else { // HORIZONTAL GENERATION
         if (numRel === 1) { // check east first
+          console.log(westArray2, 'checking this as there may be a problem here')
           huntingLocations = westArray2.concat(eastArray2)
           console.log(eastArray2, 'checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
         } else { // check west first
@@ -673,29 +671,43 @@ function init() {
     }
   }
 
-  // isIsolated(compGuessLAdv){
-  //   // this should RETURN TRUE if NSEW are all full of a guess/hit or off the edge
-  //   let never = 'V' + 'gridP' + doubleDigits(hitNumber-10)
-  //   let eat = 'H'+'gridP' + doubleDigits(hitNumber+1)
-  //   let shredded = 'V'+'gridP' + doubleDigits(hitNumber+10)
-  //   let wheat = 'H'+'gridP' + doubleDigits(hitNumber-1)   
+  function isIsolated(compGuessLAdv){
+    // this should RETURN TRUE if NSEW are all full of a guess/hit or off the edge
+    
+    let edgesS = 0
+    let cgNum = Number(compGuessLAdv.slice(-2))
+    
+    let neverS = 'gridP' + doubleDigits(cgNum-10)
+    let eatS = 'gridP' + doubleDigits(cgNum+1)
+    let shreddedS = 'gridP' + doubleDigits(cgNum+10)
+    let wheatS = 'gridP' + doubleDigits(cgNum-1)   
+    
+    let guessElemN = document.getElementById(neverS)
+    let guessElemS = document.getElementById(shreddedS)
+    let guessElemE = document.getElementById(eatS)
+    let guessElemW = document.getElementById(wheatS)
 
-  //   if ( getRandomInt(2) === 1){
-  //     if(Number(lastHitLocation.slice(-1))> 0){
-  //       huntingLocations.push(wheat)
-  //     }
-  //     if(Number(lastHitLocation.slice(-1))< 9){
-  //       huntingLocations.push(eat)
-  //     }
-  //     if (Math.floor(hitNumber/10) < 9){
-  //       huntingLocations.push(shredded)
-  //     }
-  //     if (Math.floor(hitNumber/10) > 0){
-  //       huntingLocations.push(never)
-  //     }
-
-  //     return TRUE OR FALSE
-  // }
+    if( Math.floor(cgNum/10) === 0 || guessElemN.style.backgroundColor != ''){ // has and EDGE NORTH OR hit/miss NORTH
+      edgesS++
+    }
+    if( Math.floor(cgNum/10) === 9 || guessElemS.style.backgroundColor != ''){ // has and EDGE SOUTH OR hit/miss SOUTH
+      edgesS++
+    }
+    if(Math.floor(cgNum+1)%10 === 0 || guessElemE.style.backgroundColor != ''){ // has and EDGE EAST OR hit/miss EAST
+      edgesS++
+    }
+    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.style.backgroundColor != ''){ // has and EDGE WEST OR hit/miss WEST
+      edgesS++
+    }
+    
+    console.log('isIsolated was run!! ' + compGuessLAdv, 'guess location at time of run?!')
+    if (edgesS === 4){
+      console.log('THE SQUARE WAS ISOLATED!!!!!')
+      return true
+    } else {
+      return false
+    }
+  }
 
   function computerGuess(){
     // A FEW INITIALIZATIONS
@@ -721,9 +733,7 @@ function init() {
     //re-assigned above by the search and destroy function
     // huntingGuess
     let indexHunting = lessNumbers.indexOf(Number(huntingGuess))
-    // console.log(huntingGuess, 'hunting guess before slicing and hit processing, often errors here')
     let huntingId = huntingGuess.slice(1)
-
 
     // ~~~~~~~~   SELECTION OF INITIAL GUESS BASED ON DIFFICULTY   ~~~~~~~~
     if (difficultyLevel === 'easy' || difficultyLevel === 'medium'){ // easy guess tree
@@ -740,14 +750,18 @@ function init() {
       if (hunting){ // if hunting is true, the last guess was a hit, and we will hunt until we destroy the ship hit
         lessNumbers.splice(indexHunting, 1)
         guessLoc = document.getElementById(huntingId)
+        // console.log(huntingId, 'huntingID', guessLoc, 'this was null in a bug instance, keep an eye out')
         guessClass = guessLoc.className
+        // console.log(guessClass, 'this is what failed to be created')
       } else { // procure a new advanced guess, whether initial, or secondary after isolation determined
         // While loops are scary, but! don't want to select any isolated squares ever. Waste of time for the AI. 
         loopBreaker = 0
-        if (isIsolated(compGuessLAdv) === true) { // back up advanced guess if first one generated was isolated
-          while (loopBreaker < 5 && isIsolated(compGuessLAdv) === true){
+        //isIsolated(compGuessLAdv) === true
+        if (isIsolated(compGuessLAdv)) { // back up advanced guess if first one generated was isolated
+          while ((loopBreaker < 5) && isIsolated(compGuessLAdv)){
           // if the guess is isolated, roll another new random number off remaining numbers
           // then also removed the isolated number, and produce new guess variables for
+          console.log('SO THIS WAS SKIPPED', guessLoc)
           numGuessAdv = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
           indexGuessAdv = lessNumbers.indexOf(Number(numGuessAdv))
           compGuessLAdv = 'gridP' + numGuessAdv
@@ -813,6 +827,7 @@ function init() {
     } else if (guessLoc.style.backgroundColor === ''){ // IF A COMPUTER'S GUESS MISSES A SHIP
       console.log('They missed us Admiral!' + guessLoc.id)
       if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
+        console.log('after a couple hits and a miss does this run?')
         searchAndDestroy(hunting, 'miss')
       }
       guessLoc.style.backgroundColor = 'grey'
