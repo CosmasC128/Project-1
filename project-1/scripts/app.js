@@ -71,6 +71,7 @@ function init() {
   shipSelector.disabled = true
   fightB.disabled = true
   quitB.disabled = true
+  startB.disabled = true
 
   // ~~~~~~~~~~ COMPUTER AND PLAYER SHIPS ~~~~~~~~~~~~
   const carrierC = {
@@ -205,6 +206,13 @@ function init() {
   createGrid(gridP)
 // ~~~~~   GRID CONSTRUCTION AND UTILIZATION END ~~~~~~
 
+// test some images
+  // let linkY = '' 
+  // linkY.src = '../Assets/best-smoke.png'
+  // document.getElementById('gridP02').appendChild(linkY)
+  // backgroundImage = '..//Assets/hit1.png'
+  // document.getElementById('gridP04').style.backgroundImage = '../Assets/best-smoke.png'
+  // backgroundImage = '..//Assets/best-smoke.png'
 
 
 // ~~~~~   GAME PLAY SECTION    ~~~~~~
@@ -236,10 +244,17 @@ function init() {
 
   function placeShip(ship, letter){
     if (ship.orientation === 'vertical'){
+      // let imgShip = ''
+      // imgShip.src =  '../Assets/carrier-horizontal.png'
+      // document.getElementById(ship.startLocation).appendChild(imgShip.src)
       for (let i = 0; i < ship.lengthS;i++){
         document.getElementById(`grid${letter}${parseShipL(ship, i*10)}`).classList.add(ship.classS)
+
       }
     } else {
+      // let imgShip = ''
+      // imgShip.src =  '../Assets/carrier-vertical.png'
+      // document.getElementById(ship.startLocation).appendChild(imgShip.src)
       for (let i = 0; i < ship.lengthS;i++){
         document.getElementById(`grid${letter}${parseShipL(ship, i)}`).classList.add(ship.classS)
       }
@@ -411,10 +426,6 @@ function init() {
   }
 
   // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
-// *** AI FOCUSED NOTES ***
-  // easy difficulty is simply random guess fed into computerGuess (easy??)
-  // medium difficulty is random guess fed into computerguess + search and destroy functionality
-  // hard difficulty is efficient random guessing + search and destroy functionality 
 
     // *** need to change player and computer guessing to change targets class to hit or miss ***
 
@@ -926,15 +937,19 @@ function init() {
     difficultyLevel = event.target.id
     console.log(`Difficulty level set to: ${difficultyLevel}`)
     if (event.target.id === 'hard'){
+      document.getElementById('hard').style.color = 'green'
       document.getElementById('easy').disabled = true
       document.getElementById('medium').disabled = true
     } else if (event.target.id === 'medium'){
+      document.getElementById('medium').style.color = 'green'
       document.getElementById('easy').disabled = true
       document.getElementById('hard').disabled = true      
     } else {
+      document.getElementById('easy').style.color = 'green'
       document.getElementById('medium').disabled = true
       document.getElementById('hard').disabled = true
     }
+    startB.disabled = false
   }
   
   function startButton(){
@@ -944,6 +959,7 @@ function init() {
       shipSelector.disabled = false
       fightB.disabled = false
       gridSel.style.display = 'flex'
+      difficultyLevels.forEach(btn=> btn.disabled=true)
       console.log('Begin Placement Phase')
 
       allShips.forEach(ship => {

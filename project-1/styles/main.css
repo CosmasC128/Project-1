@@ -1,3 +1,4 @@
+/* OVER-ARCHING STYLING */
 
 * {
   box-sizing: border-box;
@@ -6,6 +7,9 @@
 body{
   height: 100vh;
   margin: 0;
+  background-image: url('../Assets/water-background-bright.png');
+  background-color: rgba(0, 26, 111, 0.742);
+  font-family: 'Black Ops One', 'sans-serif';
 }
 
 .grid-wrapper, .grid-wrapper-player {
@@ -21,36 +25,63 @@ body{
   display: none;
 }
 
+
+/* MENU SECTION */
+
 #rotationButtons{
   display: flex;
   flex-direction: column;
+  width: 140px;
 }
 
 #start, #rotate, #ship, #fight, #quit{
   font-size: 30px;
   padding: 5px;
   cursor: pointer;
+  font-family: 'Black Ops One', 'sans-serif';
+  border: 2px solid rgb(38, 38, 38, .8);
 }
 
+#start{
+  background-image: url('../Assets/rectangular-plate-dull.png');
+  background-size: 200px 88px;
+}
+
+#fight{
+  background-image: url('../Assets/square-plate.png');
+  background-size: 110px 88px;
+}
 #ship {
   font-size: 20px;
+  background-image: url('../Assets/wide-plate.png');
+  background-size: 97%;
+}
+
+#rotate{
+  background-image: url('../Assets/wide-plate.png');
+  background-size: 102%;
 }
 
 #quit {
   display: none;
-}
-
-h1{
-  font-size: 20px;
+  background-image: url('../Assets/square-plate.png');
+  background-size: 110px 88px;
 }
 
 .gameBar {
-  max-width: 600px;
+  max-width: 700px;
     height: 100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 0 auto;
+    padding: 60px 20px 60px 20px;
+    border-radius: 10px;
+    border: 2.5px solid rgb(38, 38, 38);
+    font-family: 'Black Ops One', 'sans-serif';
+    background-image: url('../Assets/decking.png');
+    background-size: 100%;
+    text-shadow: 1px 1px rgba(255, 255, 255, 0.801);
 }
 
 #leftMenu {
@@ -60,22 +91,30 @@ h1{
 #rightMenu {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background-image: url('../Assets/rectangular-plate-dull.png');
+  background-size: 184px 88px;
+  padding: 5px;
+  border: 2px solid rgb(38, 38, 38, .8);
 }
 
 h1{
-  margin-right: 30px;
-  display: flex;
-  align-items: center;
+  font-size: 20px;
 }
 
 #easy, #medium, #hard{
+  font-family: 'Black Ops One', 'sans-serif';
   margin-bottom: 3px;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, .2);
-  padding: 2px;
+  border: 1px solid rgba(0, 0, 0, .4);
+  padding: 3px;
   border-radius: 8px;
   cursor: pointer;
+  background-image: url('../Assets/wide-plate.png');
+  background-size: 100%;
 }
+
+/* PLAYER AND COMPUTER GRIDS AND SQUARES */
 
 .grid, .gridP {
   display: flex;
@@ -85,58 +124,101 @@ h1{
   box-shadow: 0 0 20px 0 rgba(0,0,0,0.2);
 }
 
+.grid {
+  background-color: rgba(143, 143, 143, 0.153);
+}
+
+.gridP {
+  background-color: rgba(0, 4, 237, 0.2);
+  display: none;
+}
+
 .grid div, .gridP div{
   width: 10%;
   height: 10%;
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px dotted rgba(252, 252, 252, 0.421);
 }
 
 .grid div{
   border: 1px dotted rgba(66, 254, 4, 0.571);
 }
 
-.grid {
-  background-color: rgba(143, 143, 143, 0.153);
-}
-
-.gridP {
-  background-color: rgba(0, 4, 237, 0.292);
-  display: none;
-}
+/* SHIPS AND SUPPLEMENTARY CLASSES SUCH AS HIT AND MISS */
 
 .patrolboatC, .carrierC, .battleshipC, .destroyerC, .submarineC, .patrolboatC {
   background-color: rgba(0, 0, 0, .01);
 }
 
-.destroyed {
+
+/* EXTRA CLASSES FOR DAMAGE / MISS / DESTROYED BOAT */
+
+/* .destroyed {
   opacity: none;
-}
+} */
 
-/* .hit{
-
+.hit{
+  background-color: red;
+  background-image: url('../Assets/');
+  opacity: .01;
 }
 
 .miss {
+  background-color: grey;
+  opacity: .01;
+  background-image: url('../Assets/best-smoke.png');
+}
 
+/* COMPUTER SHIPS */
+
+.carrierC{
+  background-color: rgba(255, 0, 0, 0.01);
+}
+
+.battleshipC{
+  background-color: rgba(4, 0, 255, 0.01);
+}
+
+.destroyerC{
+  background-color: rgba(0, 255, 94, 0.01);
+}
+
+.submarineC{
+  background-color: rgba(255, 234, 0, 0.01);
+}
+
+.patrolboatC{
+  background-color: rgba(128, 0, 255, 0.01);
+}
+
+/* PLAYER SHIPS */
+
+/* #gridP01{
+  background-color: black;
 } */
 
 .carrierP{
-  background-color: rgba(255, 0, 0, 0.5);
+  background-color: rgba(255, 0, 0, 0.75);
 }
 
 .battleshipP{
-  background-color: rgba(4, 0, 255, 0.5);
+  background-color: rgba(4, 0, 255, 0.75);
 }
 
 .destroyerP{
-  background-color: rgba(0, 255, 94, 0.5);
+  background-color: rgba(0, 255, 94, 0.75);
 }
 
 .submarineP{
-  background-color: rgba(255, 234, 0, 0.5);
+  background-color: rgba(255, 234, 0, 0.75);
 }
 
 .patrolboatP{
-  background-color: rgba(128, 0, 255, 0.5);
+  background-color: rgba(128, 0, 255, 0.75);
 }
 
+/* NEED ENDGAME MENU STUFF HERE */
+/* AND OR ALERT PROMPT STYLING */
+
+/* .alert{
+
+} */
