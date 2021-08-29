@@ -428,17 +428,9 @@ function init() {
   // easy difficulty is simply random guess fed into computerGuess (easy??)
   // medium difficulty is random guess fed into computerguess + search and destroy functionality
   // hard difficulty is efficient random guessing + search and destroy functionality 
-
-  // AI levels of guessing loaded upon difficulty level
-  ////    i. random guessing
-  ////    ii. advanced guessing
-  // iii. search and destroy after a hit
-  ////    a) hunting true/false variable 
-  ////    b) hit location stored 
-  ////    c) to shoot at squares loaded 
-  //      d) keep going for the rest of the ship after those 4 squares
-  ////    e) end hunting if ship destroyed
-  //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
+  //A COUPLE MORE AI TWEAKS POSSIBLE
+  //    iv. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
+  //    v. 
 
   // *** need to change player and computer guessing to change targets class to hit or miss ***
   // *** need to make sure my computer guess function insertions are correct
@@ -464,17 +456,17 @@ function init() {
   let huntingGuess = ''
   let huntingLocations = []
   let hitStreak = 1
-  
+  let cGuesses = 0
   
   function searchAndDestroy(hunting, guessStatus){
-    console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
+    // console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
     if (hunting === true && guessStatus === 'hit'){
-      console.log('hit streak before increment', hitStreak)
+      // console.log('hit streak before increment', hitStreak)
       hitStreak++
-      console.log(hitStreak + ' hit streak achieved, now modify array editing behavior')
+      // console.log(hitStreak + ' hit streak achieved, now modify array editing behavior')
     }
     // CODE THAT ACTUALLY DOES WORK
-    console.log(lastHitLocation, 'last hit location relevant to arrays produced in next few lines')
+    // console.log(lastHitLocation, 'last hit location relevant to arrays produced in next few lines')
     let hitNumber = Number(lastHitLocation.slice(-2))
     let oriNumber = Number(originalHitLocation.slice(-2))
     let northArray1 = []
@@ -543,7 +535,7 @@ function init() {
     let eat = 'H'+'gridP' + doubleDigits(hitNumber+1)
     let shredded = 'V'+'gridP' + doubleDigits(hitNumber+10)
     let wheat = 'H'+'gridP' + doubleDigits(hitNumber-1)    
-
+    let allFour = [northArray2, southArray2, eastArray2, westArray2]
 
     if (hunting === false && guessStatus === 'hit'){
       if ( getRandomInt(2) === 1){
@@ -582,14 +574,13 @@ function init() {
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
       } else {
-        console.log('final bug could be in here')
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
       }
 
     } else if (hunting === true && guessStatus === 'hit' && hitStreak === 2){ // this is for a hit, after a hit, but only 2 in a row
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
-      console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this -> ' + Number(originalHitLocation.slice(-2)) + originalHitLocation + ' should be ' + numRel)
+      // console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this -> ' + Number(originalHitLocation.slice(-2)) + originalHitLocation + ' should be ' + numRel)
 
       // THIS NEEDS A REFACTOR FOR MULTIPLE HITS IN A LONG LINE GETTING FAR AWAY FROM THE OG HIT
       // WHAT SHOULD BE DONE? 
@@ -616,8 +607,8 @@ function init() {
       
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
+        console.log(huntingGuess, 'hunting guess after array construction')
       } else {
-        console.log('final bug could be in here')
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
       }
@@ -629,26 +620,56 @@ function init() {
 
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
+        console.log(huntingGuess, 'hunting guess after array construction')
       } else {
-        console.log('final bug could be in here')
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
       }
 
-    } else if (hunting === true && guessStatus === 'miss'){
-      if (hitStreak >= 2){
-        // here I can dump similar numbers that are still in the array
-        console.log(huntingLocations, 'array at time of miss after streak')
+    } else if (hunting === true && guessStatus === 'miss' && hitStreak === 2){
+      //here assumption is I've made the horizontal or vertical array,
+      // I've hit twice after no streak -> which triggers building of that array
+      // now I want to filter out of hunting locations what is in eastArray2 if I missed in east array direction etc
+
+      console.log(huntingLocations, ' this is what I will be cleaning')
+      console.log(huntingGuess, lastHitLocation, ' this is the current guess')
+      console.log(northArray2, southArray2, eastArray2, westArray2, 'these are the arrays up to this point N S E W')
+
+      for (let i = 0; i<allFour.length;i++){
+        console.log(i)
+        if (i.includes(huntingGuess)){
+          console.log(i)
+          let huntingMissFilt = huntingLocations.filter(loc=> !i.includes(loc))
+          
+          console.log(huntingMissFilt, 'hunting locations filtered after 2 hits and a miss, ditching the further out misses [no actual reassignment committed yet]')
+        }
       }
-      hitStreak = 1
 
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       huntingLocations = huntingLocationsFiltered
 
+      hitStreak = 1
+      // FILTER BEFORE GUESS THEN HANDLE GUESS BASED ON IF THERE ARE REMAINING ITEMS OR NOT, THEN GUESS FED BACK INTO COMPUTER GUESS FUNCTION
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
+      huntingLocations = huntingLocationsFiltered
+      if (huntingLocations.length > 0){
+        huntingGuess = huntingLocations.pop()
+        console.log(huntingGuess, 'hunting guess after array construction')
+      } else {
+        let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+        huntingGuess = 'VgridP' + randomHuntingGuess
+      }
+
+
+    } else if (hunting === true && guessStatus === 'miss'){
+
+      hitStreak = 1
+       // FILTER BEFORE GUESS THEN HANDLE GUESS BASED ON IF THERE ARE REMAINING ITEMS OR NOT, THEN GUESS FED BACK INTO COMPUTER GUESS FUNCTION
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
+      huntingLocations = huntingLocationsFiltered
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
       } else {
-        console.log('final bug could be in here')
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
       }
@@ -662,6 +683,7 @@ function init() {
 
   function computerGuess(){
     // A FEW INITIALIZATIONS
+    cGuesses++
     let guessLoc = ''
     let guessClass = ''
     let warning = ''
@@ -720,10 +742,11 @@ function init() {
         scoreP -= 100
         guessLoc.style.backgroundColor = 'red'
         lastHitLocation = guessLoc.id
+        console.log('they hit our ' + guessClass + ' at ' + guessLoc.id)
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
           searchAndDestroy(hunting, 'hit')
           if (hunting === false){
-            console.log('hunting triggered!')
+            console.log('hunting triggered! ' + guessLoc.id)
             hunting = true
           }
           
@@ -747,7 +770,7 @@ function init() {
 
           // THIS ENDS THE GAME
           if (destroyedShipsP.length === 5){
-            console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP)
+            console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " THE COMPUTER TOOK " + cGuesses + " TO WIN.")
             winner = 'computer'
           }
         } else { // IF A SHIP IS JUST DAMAGED BY A SHIP
@@ -788,14 +811,22 @@ function init() {
           computerGuess()
           computerGuess()
           computerGuess()
-          computerGuess()
+          // computerGuess()
+          // computerGuess()
+          // computerGuess()
+          // computerGuess()
+          // computerGuess()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
         computerGuess()
         computerGuess()
         computerGuess()
-        computerGuess()
+        // computerGuess()
+        // computerGuess()
+        // computerGuess()
+        // computerGuess()
+        // computerGuess()
       }
     } else if (eT.style.backgroundColor === 'red'){
       console.log('We already hit here. Choose new coordinates Admiral...')
@@ -805,7 +836,11 @@ function init() {
       computerGuess()
       computerGuess()
       computerGuess()
-      computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
     } else if (eT.style.backgroundColor === 'grey'){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
