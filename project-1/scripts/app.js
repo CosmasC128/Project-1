@@ -76,6 +76,7 @@ function init() {
     }
   }
   let backUpNumbers = loadsOfNumbers.filter(num => !lessNumbers.includes(num))
+  let guessedNumbers = []
 
   // INITIALIZE BUTTONS AS DISABLED UNTIL GAME STARTED
   rotateB.disabled = true
@@ -447,6 +448,14 @@ function init() {
   //        a) hunting true/false variable b) hit location stored c) to shoot at squares loaded d) end hunting if ship destroyed
   // I need global variables outside all the functions so they can be updated and then reference again in a new loop through
   
+  // MAJOR PROBLEM RIGHT NOW IS VERTICAL AND HORIZONTAL EXPANDING GUESSES CAN OVERLAP WITH PREVIOUS HITS OR MISSES.
+  // NEED TO COHESIVELY SLICE ALL GUESSES, WHETHER ADVANCED RANDOM GUESSES OR HUNTING GUESSES OUT OF THE
+  // TOTAL LIST OF REMAINING POSSIBLE SPOTS. BACKUP / LESSNUMBERS HOLD THESE.
+  // WHEN EXPANSIVE HOR/VERT TRIES TO FIND THINGS ITERATIVELY OUTWARDS, JUST DO A CHECK, IF IN ALREADY GUESSED -> SKIP IT
+  // THIS WILL BE THE LAST REFACTOR I DO FOR THE AI
+
+  // NEEDS ONE MORE REFACTOR RE-HITS A 2ND SHIP WHILE HITTING THE FIRST SHIP
+
   // SEARCH AND DESTROY GLOBAL CONSTANTS --- FEED INTO SEARCH AND DESTROY AND INTO COMPUTER GUESS
   let hunting = false
   let lastHitLocation = ''
@@ -454,13 +463,11 @@ function init() {
   let huntingGuess = ''
   let huntingLocations = []
   let oldHuntingGuesses = []
+  let hitStreak = false
   function searchAndDestroy(hunting, guessStatus){
     console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
     
     // CODE THAT ACTUALLY DOES WORK
-    // need to re-factor this to account for which is actually above or below
-    // since N is always guessed before south, we can assume we have to use originalNumber for southern location
-    // same with west always being second, so use original number for western location
     
     let hitNumber = Number(lastHitLocation.slice(-2))
     let oriNumber = Number(originalHitLocation.slice(-2))
@@ -469,9 +476,6 @@ function init() {
     let eastArray1 = []
     let westArray1 = []
     
-
-    // THIS NEEDS BIG REWORK TO NOT GO OFF EDGES AND NOT PUSH SPOTS ALREADY GUESSED
-    // should be bigly improved
     if(hitNumber < oriNumber){
       for (let i=0;i<=Math.floor((hitNumber/10)-1);i++){ // north 2nd hit is more north
         if (i<3){
@@ -525,10 +529,6 @@ function init() {
       }
     }
 
-
-
-
-
     let northArray2 = northArray1.reverse()
     let southArray2 = southArray1.reverse()
     let eastArray2 = eastArray1.reverse()
@@ -537,8 +537,7 @@ function init() {
     let eat = 'H'+'gridP' + doubleDigits(hitNumber+1)
     let shredded = 'V'+'gridP' + doubleDigits(hitNumber+10)
     let wheat = 'H'+'gridP' + doubleDigits(hitNumber-1)    
-    //series of if statements that only add surrounding squares if we aren't on the edge
-    // and if they weren't already guessed before ... this may not be a problem, will keep an eye on it
+
 
     if (hunting === false && guessStatus === 'hit'){
       if ( getRandomInt(2) === 1){
@@ -574,9 +573,6 @@ function init() {
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
       console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this ->' + Number(originalHitLocation.slice(-2)) + originalHitLocation + 'should be' + numRel)
 
-      // THIS NEEDS A SLIGHT TWEAK FOR GUESSING UP OR DOWN BASED ON WHETHER THE 'DUAL' HITS ARE TRACKING SOUTH OR TRACKING NORTH
-      // IF IT'S VERTICAL POSITIVE, CHECK SOUTHERN LOCATIONS FIRST CAUSE THAT MEANS THE ORIGINAL HIT IS MORE NORTH AND NUMERICALLY SMALLER ON THE BOARD
-      // IF IT'S VERTICAL NEGATIVE CHECK SOUTHERN ONES FIRST
       if (Math.abs(numRel)=== 10){ // VERTICAL GENERATION
         if (numRel === 10) { // check south first
           let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
@@ -587,19 +583,22 @@ function init() {
           let huntingVertical = huntingLocations.filter(itm => itm.includes('V'))
           let midArrayV = huntingVertical.concat(northArray2)
           huntingLocations = southArray2.concat(midArrayV)
+          console.log('problem somehwere here north array')
+          console.log(northArray2, 'north array')
+          console.log(southArray2, 'sourth array')
           console.log('checking north first', huntingLocations, 'should be a large array of potential targets only vertical')
         }
       } else { // HORIZONTAL GENERATION
         if (numRel === 1) { // check east first
           let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
           let midArrayH = huntingHorizontal.concat(eastArray2)
-          huntingLocations = westArray2.concat(midArrayH)
-          console.log('checking east first', huntingLocations, 'should be a large array of potential targets only vertical')
+          huntingLocations = westArray2.slice(0,-1).concat(midArrayH)
+          console.log('checking east first', huntingLocations, 'should be a large array of potential targets only horizontal')
         } else { // check west first
           let huntingHorizontal = huntingLocations.filter(itm => itm.includes('H'))
           let midArrayH = huntingHorizontal.concat(westArray2)
           huntingLocations = eastArray2.concat(midArrayH)
-          console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only vertical')
+          console.log('does my cleaning work', huntingLocations, 'should be a large array of potential targets only horizontal')
         }
       }
       
@@ -607,6 +606,9 @@ function init() {
       console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
     
     } else if (hunting === true && guessStatus === 'miss'){
+      if (hitStreak === true){
+        console.log(huntingLocations, "need to process this properly if we have a ship we're hunting, and a miss is detected")
+      }
       huntingGuess = huntingLocations.pop()
     }
 
@@ -638,6 +640,7 @@ function init() {
     //re-assigned above by the search and destroy function
     // huntingGuess
     let indexHunting = lessNumbers.indexOf(Number(huntingGuess))
+    console.log(huntingGuess, 'hunting guess before slicing and hit processing, often errors here')
     let huntingId = huntingGuess.slice(1)
 
     // SELECTION OF INITIAL GUESS BASED ON DIFFICULTY
@@ -672,7 +675,6 @@ function init() {
         scoreP -= 100
         guessLoc.style.backgroundColor = 'red'
         lastHitLocation = guessLoc.id
-        console.log(lastHitLocation, 'lastHitLocation variable, this is working')
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
           searchAndDestroy(hunting, 'hit')
           if (hunting === false){
@@ -695,6 +697,7 @@ function init() {
             lastHitLocation = '' //the hit location (original hit) should be wiped
             originalHitLocation = ''
             huntingLocations = []
+            hitStreak = false
           }
 
           // THIS ENDS THE GAME
