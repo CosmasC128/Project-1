@@ -1,5 +1,4 @@
 function init() {
-
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
 
@@ -206,13 +205,10 @@ function init() {
   createGrid(gridP)
 // ~~~~~   GRID CONSTRUCTION AND UTILIZATION END ~~~~~~
 
-// test some images
-  // let linkY = '' 
-  // linkY.src = '../Assets/best-smoke.png'
-  // document.getElementById('gridP02').appendChild(linkY)
-  // backgroundImage = '..//Assets/hit1.png'
-  // document.getElementById('gridP04').style.backgroundImage = '../Assets/best-smoke.png'
-  // backgroundImage = '..//Assets/best-smoke.png'
+// *** HERE IS THE PROBLEM I'M WORKING ON
+const  newExplosion = document.createElement('img')
+// newExplosion.src = '../Assets/hit1.png'
+// document.getElementById('gridP04').appendChild(newExplosion)
 
 
 // ~~~~~   GAME PLAY SECTION    ~~~~~~

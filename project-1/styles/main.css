@@ -48,6 +48,7 @@ body{
 }
 
 #fight{
+  width: 110px;
   background-image: url('../Assets/square-plate.png');
   background-size: 110px 88px;
 }
@@ -64,24 +65,25 @@ body{
 
 #quit {
   display: none;
+  width: 110px;
   background-image: url('../Assets/square-plate.png');
   background-size: 110px 88px;
 }
 
 .gameBar {
   max-width: 700px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 auto;
-    padding: 60px 20px 60px 20px;
-    border-radius: 10px;
-    border: 2.5px solid rgb(38, 38, 38);
-    font-family: 'Black Ops One', 'sans-serif';
-    background-image: url('../Assets/decking.png');
-    background-size: 100%;
-    text-shadow: 1px 1px rgba(255, 255, 255, 0.801);
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 60px 20px 60px 20px;
+  border-radius: 10px;
+  border: 2.5px solid rgb(38, 38, 38);
+  font-family: 'Black Ops One', 'sans-serif';
+  background-image: url('../Assets/decking.png');
+  background-size: 100%;
+  text-shadow: 1px 1px rgba(255, 255, 255, 0.801);
 }
 
 #leftMenu {
