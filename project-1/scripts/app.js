@@ -1,10 +1,5 @@
 function init() {
 
-    let gN = [76, 87, 81, 58, 90, 29, 52, 23, 24, 22, 13, 33, 43, 27, 67, 34, 74, 78, 38, 41, 42, 40]
-    let toFilt = ["HgridP44", "HgridP43", "HgridP42"]
-    let filtered1 = toFilt.filter(num => !gN.includes(Number(num.slice(-2))))
-    toFilt = filtered1
-    console.log(toFilt)
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
   // *** REQUIRED FOR MVP ***  
@@ -577,13 +572,21 @@ function init() {
         if(Number(lastHitLocation.slice(-1))< 9){
           huntingLocations.push(eat)
         }
+
       }
-      // console.log(huntingLocations, 'unfiltered hunting locations')
-      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(loc.slice(1)))
+
+
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       huntingLocations = huntingLocationsFiltered
-      // console.log(huntingLocations, 'filtered hunting locations')
-      huntingGuess = huntingLocations.pop()
-      console.log(huntingGuess, 'this popped after hunting false, status hit (first hit on a ship by the computer)')
+
+      if (huntingLocations.length > 0){
+        huntingGuess = huntingLocations.pop()
+      } else {
+        console.log('final bug could be in here')
+        let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+        huntingGuess = 'VgridP' + randomHuntingGuess
+      }
+
     } else if (hunting === true && guessStatus === 'hit' && hitStreak === 2){ // this is for a hit, after a hit, but only 2 in a row
       let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
       console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this -> ' + Number(originalHitLocation.slice(-2)) + originalHitLocation + ' should be ' + numRel)
@@ -608,26 +611,30 @@ function init() {
         }
       }
 
-      console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
-      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Numbers(loc.slice(-2))))
-      console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
-      console.log(huntingLocations, 'filtered hunting locations')
-
+      huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
       huntingLocations = huntingLocationsFiltered
-      huntingGuess = huntingLocations.pop()
-      console.log(huntingGuess, 'this popped after hunting true, status hit (2 hits in a row)')
-    
+      
+      if (huntingLocations.length > 0){
+        huntingGuess = huntingLocations.pop()
+      } else {
+        console.log('final bug could be in here')
+        let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+        huntingGuess = 'VgridP' + randomHuntingGuess
+      }
+
     } else if (hunting === true && guessStatus === 'hit' && hitStreak > 2){
 
-      console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
-      console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
-      console.log(huntingLocations, 'filtered hunting locations')
 
-      huntingLocations = huntingLocationsFiltered
-      console.log(huntingLocations, 'filtered hunting locations')
-      huntingGuess = huntingLocations.pop()
+      if (huntingLocations.length > 0){
+        huntingGuess = huntingLocations.pop()
+      } else {
+        console.log('final bug could be in here')
+        let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+        huntingGuess = 'VgridP' + randomHuntingGuess
+      }
+
     } else if (hunting === true && guessStatus === 'miss'){
       if (hitStreak >= 2){
         // here I can dump similar numbers that are still in the array
@@ -635,15 +642,16 @@ function init() {
       }
       hitStreak = 1
 
-      console.log(guessedNumbers, 'GUESS NUMBERS SHOULD NEVER COME UP AGAIN')
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
-      console.log(huntingLocationsFiltered, 'hunting locations filtered variable')
       huntingLocations = huntingLocationsFiltered
-      console.log(huntingLocations, 'filtered hunting locations')
 
-      huntingLocations = huntingLocationsFiltered
-      console.log(huntingLocations, 'filtered hunting locations')
-      huntingGuess = huntingLocations.pop()
+      if (huntingLocations.length > 0){
+        huntingGuess = huntingLocations.pop()
+      } else {
+        console.log('final bug could be in here')
+        let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+        huntingGuess = 'VgridP' + randomHuntingGuess
+      }
 
     }
 
