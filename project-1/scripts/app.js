@@ -1,5 +1,4 @@
 function init() {
-
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
   // *** REQUIRED FOR MVP ***  
@@ -434,8 +433,9 @@ function init() {
   // iii. search and destroy after a hit
   ////    a) hunting true/false variable 
   ////    b) hit location stored 
-  //    c) to shoot at squares loaded 
-  ////    d) end hunting if ship destroyed
+  ////    c) to shoot at squares loaded 
+  //      d) keep going for the rest of the ship after those 4 squares
+  ////    e) end hunting if ship destroyed
   //    iV. re-evaluate andvanced guessing after destorying smallest ships / clear central limited area before chasing outer ships
 
   // *** need to change player and computer guessing to change targets class to hit or miss ***
@@ -456,69 +456,78 @@ function init() {
   let huntingCounter = 0
 
   function searchAndDestroy(hunting, guessStatus){
-    // need a function that tells the ai what its next guess will be
-    // if hunting is true get your guess from search and destroy, otherwise get a new random guess
-    // 5 potential outcomes the 5th being likely unnecessary
-    // if (hunting === true && guessStatus === 'hit'){
-    //   console.log('hunting is true and guess is a hit')
-    // } else if (hunting === true && guessStatus === 'miss'){
-    //   console.log('hunting is true and guess is a miss')
-    // }else if (hunting === false && guessStatus === 'hit') {
-    //   console.log('hunting is false and guess is a hit')
-    // } else if (hunting === false && guessStatus === 'miss') {
-    //   console.log('hunting is false and guess is a miss')
-    // }
 
     console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
-    console.log(lastHitLocation, 'last hit location at start of S&D work')
 
-
-    
     // CODE THAT ACTUALLY DOES WORK
-
     let hitNumber = Number(lastHitLocation.slice(-2))
     // validation code for not above, not below, not off the left or right edge
     //series of if statements that only add surrounding squares if we aren't on the edge
     // and if they weren't already guessed before ... this may not be a problem, will keep an eye on it
+    // let holdingArray = []
     let never = 'gridP' + doubleDigits(hitNumber-10)
     let eat = 'gridP' + doubleDigits(hitNumber+1)
     let shredded = 'gridP' + doubleDigits(hitNumber+10)
     let wheat = 'gridP' + doubleDigits(hitNumber-1)
 
-    function pushCompassBearings(never, shredded, eat, wheat){
-      if(Number(lastHitLocation.slice(-1))< 9){
-        huntingLocations.push(eat)
-      }
-      if(Number(lastHitLocation.slice(-1))> 0){
-        huntingLocations.push(wheat)
-      }
-      if (Math.floor(hitNumber/10 < 9)){
-        huntingLocations.push(shredded)
-      }
-      if (Math.floor(hitNumber/10 > 0)){
-        huntingLocations.push(never)
-      }
-    }
+    let lilRandom = getRandomInt(2)
 
     if (hunting === false && guessStatus === 'hit'){
-      pushCompassBearings(never, shredded, eat, wheat)
-    } else if (hunting === true && guessStatus === 'hit'){
+      if (lilRandom = 1){
+        if(Number(lastHitLocation.slice(-1))> 0){
+          huntingLocations.push(wheat)
+        }
+        if(Number(lastHitLocation.slice(-1))< 9){
+          huntingLocations.push(eat)
+        }
+        if (Math.floor(hitNumber/10) < 9){
+          huntingLocations.push(shredded)
+        }
+        if (Math.floor(hitNumber/10) > 0){
+          huntingLocations.push(never)
+        }
+      } else {
+        if (Math.floor(hitNumber/10) < 9){
+          huntingLocations.push(shredded)
+        }
+        if (Math.floor(hitNumber/10) > 0){
+          huntingLocations.push(never)
+        }
+        if(Number(lastHitLocation.slice(-1))> 0){
+          huntingLocations.push(wheat)
+        }
+        if(Number(lastHitLocation.slice(-1))< 9){
+          huntingLocations.push(eat)
+        }
+      }
+    } else if (hunting === true && guessStatus === 'hit'){ // this is for a hit, after a hit
+      console.log('I WANT THIS TO POP UP WHEN THINGS GO WRONG')
+      let numRel = Number(lastHitLocation.slice(-2)) - Number(originalHitLocation.slice(-2))
+      console.log('quick tester here')
+      console.log(lastHitLocation + ' <-this ' + Number(lastHitLocation.slice(-2)) + ' minus this ->' + Number(originalHitLocation.slice(-2)) + originalHitLocation + 'should be' + numRel)
       // here compare the last hit to the most recent hit, numerically it will give you a relation and then you can choose to only add a before and after
       // and you can pop the east and west or north and south from the previous one
+      if (){
+
+      } else {
+
+      }
+      // can make an array of new locations around a new hit, and only append them, if they are not already in the array, and they are edge validated
+    
+      // numRel = 10 means original location is north, don't add south, ditch original E/W from the array
+      // numRel = -10 means original location is south, don't add south, ditch original E/W from the array
+      //numRel = 1 means original location is west, don't add west, ditch original N/S from the array
+      //numRel = -1 means original location is east, don't add east, ditch original N/S from the array
     }
 
-    
-    originalHitLocation = lastHitLocation
-
-    console.log(huntingLocations)
+    if (hunting === false){
+      originalHitLocation = lastHitLocation
+    }
+    console.log(originalHitLocation, 'original hit location')
+    console.log(huntingLocations, 'the now appended hunting locations')
     huntingGuess = huntingLocations.pop()
-    console.log(huntingLocations)
     console.log(huntingGuess, 'hunting guess')
-    // if not hunting, and hit is passed in INITIALIZE, and go counter clockwise
-    // if hunting miss REVOLVE (aka keep going)
-    // if hunting and hit again (originalHitLocation = lastHitLocation and lastHitLocation = where we just hit(ref???)), restart and go counter clockwise
-    // if hunting and hit, double down (hard part)
-    // if hunting, and hit again, 
+    console.log(huntingLocations)
   }
 
   function computerGuess(){
@@ -552,7 +561,6 @@ function init() {
         lessNumbers.splice(indexHunting, 1)
         guessLoc = document.getElementById(huntingId)
         guessClass = guessLoc.className
-        console.log(huntingId + ' hunting id ' + 'running search and destroy easy')
       } else { // procure a new easy guess and eliminate it from the remaining guesses
         loadsOfNumbers.splice(indexGuessEasy, 1)
         guessLoc = document.getElementById(compGuessLEasy)
@@ -561,7 +569,6 @@ function init() {
     } else { // advancing guessing tree
       if (hunting){ // if hunting is true, the last guess was a hit, and we will hunt until we destroy the ship hit
         lessNumbers.splice(indexHunting, 1)
-        console.log(huntingId + ' hunting id ' + 'running search and destroy advanced')
         guessLoc = document.getElementById(huntingId)
         guessClass = guessLoc.className
       } else { // procure a new advanced guess and eliminate it from the remaining guesses
@@ -580,13 +587,14 @@ function init() {
         scoreP -= 100
         guessLoc.style.backgroundColor = 'red'
         lastHitLocation = guessLoc.id
-        console.log(lastHitLocation, 'lastHitLocation variable')
+        console.log(lastHitLocation, 'lastHitLocation variable, this is working')
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
+          searchAndDestroy(hunting, 'hit')
           if (hunting === false){
             console.log('hunting triggered!')
             hunting = true
           }
-          searchAndDestroy(hunting, 'hit')
+          
         }
 
         if(damagedShip.damage === damagedShip.hitPoints){ // IF A SHIP IS TOTALLY DESTROYED BY A HIT
@@ -645,16 +653,16 @@ function init() {
           winner = 'player'
         } else {
           computerGuess()
-          computerGuess()
-          computerGuess()
-          computerGuess()
+          // computerGuess()
+          // computerGuess()
+          // computerGuess()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
         computerGuess()
-        computerGuess()
-        computerGuess()
-        computerGuess()
+        // computerGuess()
+        // computerGuess()
+        // computerGuess()
       }
     } else if (eT.style.backgroundColor === 'red'){
       console.log('We already hit here. Choose new coordinates Admiral...')
@@ -662,9 +670,9 @@ function init() {
       console.log('We missed Admiral!')
       eT.style.backgroundColor = 'grey'
       computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
     } else if (eT.style.backgroundColor === 'grey'){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
@@ -744,10 +752,6 @@ function init() {
   quitB.addEventListener('click', fakeQuit)
 
   // ~~~~~   FINAL INITIALIZAIONS FOR TESTING STAGES    ~~~~~~
-
-
-
-
 
 }
 
