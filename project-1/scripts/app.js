@@ -205,11 +205,6 @@ function init() {
   createGrid(gridP)
 // ~~~~~   GRID CONSTRUCTION AND UTILIZATION END ~~~~~~
 
-// *** HERE IS THE PROBLEM I'M WORKING ON
-const  newExplosion = document.createElement('img')
-// newExplosion.src = '../Assets/hit1.png'
-// document.getElementById('gridP04').appendChild(newExplosion)
-
 
 // ~~~~~   GAME PLAY SECTION    ~~~~~~
 
@@ -240,17 +235,14 @@ const  newExplosion = document.createElement('img')
 
   function placeShip(ship, letter){
     if (ship.orientation === 'vertical'){
-      // let imgShip = ''
-      // imgShip.src =  '../Assets/carrier-horizontal.png'
-      // document.getElementById(ship.startLocation).appendChild(imgShip.src)
+
+      // ADD IN PUSHING SHIP IMAGE CLASS VERT AND HORIZONTAL TO SHIP STARTLOCATIONS
+      // document.getElementById(ship.startLocation).classList.add()
+
       for (let i = 0; i < ship.lengthS;i++){
         document.getElementById(`grid${letter}${parseShipL(ship, i*10)}`).classList.add(ship.classS)
-
       }
     } else {
-      // let imgShip = ''
-      // imgShip.src =  '../Assets/carrier-vertical.png'
-      // document.getElementById(ship.startLocation).appendChild(imgShip.src)
       for (let i = 0; i < ship.lengthS;i++){
         document.getElementById(`grid${letter}${parseShipL(ship, i)}`).classList.add(ship.classS)
       }
@@ -462,16 +454,16 @@ const  newExplosion = document.createElement('img')
     let guessElemE = document.getElementById(eatS)
     let guessElemW = document.getElementById(wheatS)
 
-    if( Math.floor(cgNum/10) === 0 || guessElemN.style.backgroundColor === 'grey'){ // has and EDGE NORTH OR hit/miss NORTH
+    if( Math.floor(cgNum/10) === 0 || guessElemN.classList.contains('miss')){ // has and EDGE NORTH OR MISS NORTH
       edgesS++
     }
-    if( Math.floor(cgNum/10) === 9 || guessElemS.style.backgroundColor === 'grey'){ // has and EDGE SOUTH OR hit/miss SOUTH
+    if( Math.floor(cgNum/10) === 9 || guessElemS.classList.contains('miss')){ // has and EDGE SOUTH OR MISS SOUTH
       edgesS++
     }
-    if(Math.floor(cgNum+1)%10 === 0 || guessElemE.style.backgroundColor === 'grey'){ // has and EDGE EAST OR hit/miss EAST
+    if(Math.floor(cgNum+1)%10 === 0 || guessElemE.classList.contains('miss')){ // has and EDGE EAST OR MISS EAST
       edgesS++
     }
-    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.style.backgroundColor === 'grey'){ // has and EDGE WEST OR hit/miss WEST
+    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemE.classList.contains('miss')){ // has and EDGE WEST OR MISS WEST
       edgesS++
     }
     
@@ -790,11 +782,11 @@ const  newExplosion = document.createElement('img')
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
     guessedNumbers.push(Number(guessLoc.id.slice(-2))) // ESSENTIAL FOR TRACKING GUESSES FOR FILTERING HUNTING LOCATION ARRAYS
-    if (guessLoc.style.backgroundColor != 'red' && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
+    if (!guessLoc.classList.contains('hit') && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
         scoreP -= 100
-        guessLoc.style.backgroundColor = 'red'
+        guessLoc.classList.add('hit')
         lastHitLocation = guessLoc.id
         console.log('they hit our ' + guessClass + ' at ' + guessLoc.id)
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
@@ -843,13 +835,13 @@ const  newExplosion = document.createElement('img')
           }
           console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
-    } else if (guessLoc.style.backgroundColor === ''){ // IF A COMPUTER'S GUESS MISSES A SHIP
+    } else if (!guessLoc.classList.contains('hit') && !guessLoc.classList.contains('miss')){ // IF A COMPUTER'S GUESS MISSES A SHIP
       console.log('They missed us Admiral!' + guessLoc.id)
       if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
         console.log('after a couple hits and a miss does this run?')
         searchAndDestroy(hunting, 'miss')
       }
-      guessLoc.style.backgroundColor = 'grey'
+      guessLoc.classList.add('miss')
     }
   }
 
@@ -857,11 +849,11 @@ const  newExplosion = document.createElement('img')
   function playerGuess(event) {
     const eT = event.target
     const guessClass = eT.className
-    if (eT.style.backgroundColor != 'red' && computerClasses.includes(guessClass) ){
+    if (!eT.classList.contains('hit') && computerClasses.includes(guessClass) ){
       let damagedShip = computerShips[computerClasses.indexOf(guessClass)]
       damagedShip.damage++
       scoreP += 100
-      eT.style.backgroundColor = 'red'
+      eT.classList.add('hit')
 
       if(damagedShip.damage === damagedShip.hitPoints){
         console.log(`We destroyed their ${guessClass.slice(0,-1)} Admiral! One step closer to victory!`)
@@ -873,39 +865,20 @@ const  newExplosion = document.createElement('img')
           winner = 'player'
         } else {
           computerGuess()
-          computerGuess()
-          computerGuess()
-          // computerGuess()
-          // computerGuess()
-          // computerGuess()
-          // computerGuess()
-          // computerGuess()
         }
       } else {
         console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
         computerGuess()
-        computerGuess()
-        computerGuess()
-        // computerGuess()
-        // computerGuess()
-        // computerGuess()
-        // computerGuess()
-        // computerGuess()
       }
-    } else if (eT.style.backgroundColor === 'red'){
+    } else if (eT.classList.contains('hit')){
       console.log('We already hit here. Choose new coordinates Admiral...')
-    } else if (eT.style.backgroundColor === ''){
+    } else if (!eT.classList.contains('miss') && !eT.classList.contains('hit')){
       console.log('We missed Admiral!')
-      eT.style.backgroundColor = 'grey'
+      eT.classList.add('miss')
       computerGuess()
       computerGuess()
       computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-    } else if (eT.style.backgroundColor === 'grey'){
+    } else if (eT.classList.contains('miss')){
       console.log('We already missed here. Choose new coordinates Admiral...')
     }
   }

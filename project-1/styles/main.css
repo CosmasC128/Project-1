@@ -159,15 +159,17 @@ h1{
 } */
 
 .hit{
-  background-color: red;
-  background-image: url('../Assets/');
-  opacity: .01;
+  background-color: 'red';
+  opacity: .9;
+  background-image: url('../Assets/hit1.png');
+  background-size: 100%;
 }
 
 .miss {
   background-color: grey;
-  opacity: .01;
+  opacity: .9;
   background-image: url('../Assets/best-smoke.png');
+  background-size: 100%;
 }
 
 /* COMPUTER SHIPS */
@@ -194,28 +196,38 @@ h1{
 
 /* PLAYER SHIPS */
 
-/* #gridP01{
-  background-color: black;
-} */
+/* ONLY START LOCATION SHOULD BE TAGGED WITH A CLASS AND THE CLASS  */
+/* SHOULD INCLUDE VERTICAL OR HORIZONTAL AND THE IMAGE IS NOT CONTAINED BY THE SQUARE IT SPAWNS FROM */
+/* KEEP IN MIND SQUARES ARE 60PX */
 
 .carrierP{
   background-color: rgba(255, 0, 0, 0.75);
+  background-image: url('../Assets/carrier-vertical.png');
+  background-image: contain;
 }
 
 .battleshipP{
   background-color: rgba(4, 0, 255, 0.75);
+  background-image: url('../Assets/battleship-vertical.png');
+  background-image: contain;
 }
 
 .destroyerP{
   background-color: rgba(0, 255, 94, 0.75);
+  background-image: url('../Assets/destroyer-vertical.png');
+  background-image: contain;
 }
 
 .submarineP{
   background-color: rgba(255, 234, 0, 0.75);
+  background-image: url('../Assets/patrolboat-vertical.png');
+  background-image: contain;
 }
 
 .patrolboatP{
   background-color: rgba(128, 0, 255, 0.75);
+  background-image: url('../Assets/patrolboat-vertical.png');
+  background-image: contain;
 }
 
 /* NEED ENDGAME MENU STUFF HERE */
