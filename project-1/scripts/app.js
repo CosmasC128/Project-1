@@ -3,10 +3,10 @@ function init() {
   // NOTES FOR MYSELF
 
   // *** essentials from my perspective ***
-  // 1. turn all console logs into alerts/confirms
-  // 2. Game Ending programming (quit resets this and normal states without reloading whole page?)
-  // 3. draggable ships?
+  // 3. movable ships (grid movement?)
   // 4. 2nd ship hit intelligence <- only bug problems are here
+  // if I spend too long on 2 ships, do grid movement probably not that bad
+  // let's look at it first actually
 
   //*** very optional ***
   // 6. reveal ships when they are destroyed for both teams 
@@ -26,6 +26,7 @@ function init() {
   // HTML ELEMENT REFERENCES
   const startB = document.getElementById('start')
   const titleB = document.getElementById('titleB')
+  const titleC = document.getElementById('titleC')
   const rotateB = document.getElementById('rotate')
   const gridSel = document.querySelector('.gridP')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
@@ -209,9 +210,6 @@ function init() {
 
   // GRID BASED CONSTANTS
   const computerBoxes = document.querySelectorAll('.grid div')
-  // TESTING MY END GAMES
-
-  // FUNCTIONS
 
   // ~~~~~~~~   SHIP PLACEMENT AND VALIDATION SECTION ( INITIALIZATION / STRATEGY / PLACEMENT PHASE)   ~~~~~~~~
 
@@ -422,7 +420,7 @@ function init() {
           continue
         } else {
           ship.startLocation = gridLoc
-          if(validateSpawn(ship, letter).includes(true)){
+          if(validateSpawn(ship, letter).includes(true)){ //this will only include true, if there's one of several obstacles
             ship.startLocation = ''
           } else {
             validStart = true
@@ -447,6 +445,54 @@ function init() {
       pass += 1
     }
   }
+  
+  function gridMove(event){
+    //do the code only if we're in strategy phase
+    if(startB.disabled === true && fightB.disabled === false){  
+      const key = event.keyCode // event.keyCode is the unique code for the key that was pressed
+      const right = 39
+      const left = 37
+      const up = 38
+      const down = 40
+      // throw in a space bar id number here and then put space bar causes a rotation?
+      // have to mess with the code validation AKA every to the right of the &&
+      // I DONT HAVE ANY WIDTH STUFF ANYWHERE
+      //I think validate spawn is all the validation I need, and I can ignore this stuff. But I will save it in case
+      // it is very good at validating if you are 1 square wide, but less so if you're a range of squares wide.
+      // *** DECPRECATED BORROWED CODE FROM CLASS CAT GRID MOVEMENT EXAMPLE***
+      // if (key === right && currentPosition % width !== width - 1){
+      //   selectedShip.startLocation = parseShipL(selectedShip, 1)
+      // } else if (key === left && currentPosition % width !== 0){
+      //   selectedShip.startLocation = parseShipL(selectedShip, -1)
+      // } else if (key === up && currentPosition >= width){
+      //   selectedShip.startLocation = parseShipL(selectedShip, -10)
+      // } else if (key === down && currentPosition + width <= cellCount - 1){
+      //   selectedShip.startLocation = parseShipL(selectedShip, 10)
+      // } else {
+      //   window.alert('INVALID KEY: use the arrow keys!')
+      // }
+
+      if (key === right){
+        selectedShip.startLocation = parseShipL(selectedShip, 1)
+      } else if (key === left){
+        selectedShip.startLocation = parseShipL(selectedShip, -1)
+      } else if (key === up){
+        selectedShip.startLocation = parseShipL(selectedShip, -10)
+      } else if (key === down){
+        selectedShip.startLocation = parseShipL(selectedShip, 10)
+      } else {
+        window.alert('INVALID KEY: use the arrow keys!')
+      }
+      // spawn new boat off new location
+      if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
+        window.alert('The ship cannot move there Admiral!')
+      } else { // if true was not return, then you're all clear to move to the new updated starting location
+        unplaceShip(selectedShip)
+        placeShip(selectedShip, 'P')
+      }
+    }
+  }
+
 
   // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
 
@@ -1002,6 +1048,7 @@ function init() {
   function startButton(){
     if (difficultyLevel.length > 0){
       titleB.style.display = 'none'
+      titleC.style.display = 'none'
       startB.disabled = true
       rotateB.disabled = false
       shipSelector.disabled = false
@@ -1039,8 +1086,8 @@ function init() {
   difficultyLevels.forEach(btn => btn.addEventListener('click', setDifficulty))
   fightB.addEventListener('click', fightButton)
   quitB.addEventListener('click', fakeQuit)
+  document.addEventListener('keydown', gridMove) // Listening for key press
 
-  // ~~~~~   FINAL INITIALIZAIONS FOR TESTING STAGES    ~~~~~~
 
 }
 
