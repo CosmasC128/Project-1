@@ -240,9 +240,16 @@ function init() {
 
   function unplaceShipMove(ship){
     //probably should just get an 'old area code to pass into the deleter here'
+    // need to find out how to cleanly remove images that pile up
+    // let toDel = document.querySelectorAll(`.${ship.classS} img`)
+    // console.log(toDel)
+    // if (toDel != []){
+    //   toDel.remove()
+    // }
     let feedLocation = locationToEliminate
     const shipSquares = document.querySelectorAll(`.${ship.classS}`)
-    shipSquares.forEach(sqr => sqr.classList.contains(ship.classS) ? sqr.classList.remove(ship.classS) : console.log('swing and a miss, here was a problem before'))
+    // shipSquares[0].removeChild('img') this seems ot break everything
+    shipSquares.forEach(sqr => sqr.classList.remove(ship.classS))
     let imgRem = document.querySelector(`#${feedLocation} img`)
     if (imgRem != null){
       imgRem.remove()
@@ -458,11 +465,11 @@ function init() {
   
   function gridMove(event){
     //do the code only if we're in strategy phase
-    let strayImg = document.querySelectorAll('.gridP div img')
-    if (strayImg.length > 0){
-      strayImg.forEach(img=> img.remove())
-    }
-    playersShips.forEach(ship=> placeShip(ship,'P'))
+    // let strayImg = document.querySelectorAll('.gridP div img')
+    // if (strayImg.length > 0){
+    //   strayImg.forEach(img=> img.remove())
+    // }
+    try{
     locationToEliminate = selectedShip.startLocation
     if(startB.disabled === true && fightB.disabled === false){  
       const key = event.keyCode // event.keyCode is the unique code for the key that was pressed
@@ -471,9 +478,7 @@ function init() {
       const up = 38
       const down = 40
       const space = 32
-      // throw in a space bar id number here and then put space bar causes a rotation?
-      // console.log(Number(selectedShip.startLocation.slice(-1)), 'something weird here going west')
-      let backUpStart = selectedShip.startLocation
+      console.log(selectedShip.startLocation)
       if (key === right){
         if(parseShipL(selectedShip, 1)%10 === 0){
         } else{
@@ -485,7 +490,7 @@ function init() {
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
         }
       } else if (key === up){
-        if(parseShipL(selectedShip, -10) <= 0){
+        if(parseShipL(selectedShip, -10) < 0){
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
         }
@@ -499,16 +504,23 @@ function init() {
       }else {
         window.alert('INVALID KEY: use the arrow keys to move and space bar to rotate!')
       }
-      if (locationToEliminate !== selectedShip.startLocation){
-        if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
-          window.alert('The ship cannot move there Admiral!')
-          // selectedShip.startLocation = backUpStart
-        } else { // if true was not return, then you're all clear to move to the new updated starting location
-          unplaceShipMove(selectedShip)
-          placeShip(selectedShip, 'P')
+      if (parseShipL(selectedShip,0)<0){
+        console.log('The ship is struggling to mark headway there Admiral!')
+      } else{
+        if (locationToEliminate !== selectedShip.startLocation){
+          if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
+            console.log('The ship is struggling to mark headway there Admiral!')
+            // selectedShip.startLocation = backUpStart
+          } else { // if true was not return, then you're all clear to move to the new updated starting location
+            unplaceShipMove(selectedShip)
+            placeShip(selectedShip, 'P')
+          }
         }
       }
-
+    }
+    }
+    catch{
+      console.log('That ship might be sailing out of the battlezone!')
     }
   }
 
