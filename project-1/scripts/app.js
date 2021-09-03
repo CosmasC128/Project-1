@@ -2,23 +2,20 @@ function init() {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // NOTES FOR MYSELF
 
-  // THURSDAY:
-  // 2. change hits and misses to add classes of hit and miss for assets and for detection
+  // *** essentials from my perspective ***
+  // 1. turn all console logs into alerts/confirms
+  // 2. Game Ending programming (quit resets this and normal states without reloading whole page?)
   // 3. draggable ships?
-  // 5. turn all console logs into alerts/confirms
-  // 6. reveal ships when they are destroyed for both teams 
-  // 7. Game Ending programming (quit resets this and normal states without reloading whole page?)
-  // 8. Assets -> ship visuals, water, styling, explosion on hit, ship destroyed, miss splash etc
-  // 9. Add sound effects, add music, add a mute button for effects and a mute for sound
-  // 10. add coordinates around edges of computer board, confirm target selection with letter and a number
+  // 4. 2nd ship hit intelligence <- only bug problems are here
 
+  //*** very optional ***
+  // 6. reveal ships when they are destroyed for both teams 
+  // 9. Add sound effects, add music, add a mute button for effects and a mute for sound
   // IF TIME REMAINS:
   // X. Commenting for intelligibility
   // Y. Code Dryness / Refactoring
-  // Z. 2nd ship hit intelligence
-  
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // ~~~~~~~~~~~~    CODING BEGINS HERE   ~~~~~~~~~~~~~~~~
   
@@ -33,6 +30,7 @@ function init() {
   const gridSel = document.querySelector('.gridP')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
   const disGssGrd = document.querySelector('.grid-wrapper')
+  const doubleWrapper = document.querySelector('.doubleWrapper')
   const fightB = document.getElementById('fight')
   const quitB = document.getElementById('quit')
   const shipSelector = document.getElementById('ship')
@@ -231,6 +229,8 @@ function init() {
   function unplaceShip(ship){
     const shipSquares = document.querySelectorAll(`.${ship.classS}`)
     shipSquares.forEach(sqr => sqr.classList.remove(ship.classS))
+    let imgRem = document.querySelector(`#${ship.startLocation} img`)
+    imgRem.remove()
   }
 
   function placeShip(ship, letter){
@@ -374,7 +374,7 @@ function init() {
   function rotateShip(ship, letter){
     if (ship.orientation === 'vertical'){
       if(validateRotation(ship, letter).includes(true)){
-        console.log("Can't be rotated at this location")
+        window.alert("This ship can't be rotated at this location.")
       } else {
         ship.orientation = 'horizontal'
         unplaceShip(ship)
@@ -382,7 +382,7 @@ function init() {
       }
     } else {
       if(validateRotation(ship, letter).includes(true)){
-        console.log("Can't be rotated at this location")
+        window.alert("This ship can't be rotated at this location.")
       } else{
         ship.orientation = 'vertical'
         unplaceShip(ship)
@@ -448,8 +448,6 @@ function init() {
 
   // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
 
-    // *** need to change player and computer guessing to change targets class to hit or miss ***
-
   // *** implement this only if I have finised my other styling work ***
   //    vii. NEEDS ONE MORE REFACTOR RE-HITS A 2ND SHIP WHILE HITTING THE FIRST SHIP
   //        aka, remember if you hit a 2nd ship, and if you destroy a ship, feed right back into destroying
@@ -473,8 +471,6 @@ function init() {
 
   function isIsolated(compGuessLAdv){
     // this should RETURN TRUE if NSEW are all full of a miss or off the edge
-    // NEEDS TO BE EXAMINED ONE MORE TIME
-    // just fixed one bug at least! that might have just been it...
     
     let edgesS = 0
     let cgNum = Number(compGuessLAdv.slice(-2))
@@ -796,7 +792,7 @@ function init() {
           while ((loopBreaker < 5) && isIsolated(compGuessLAdv)){
           // if the guess is isolated, roll another new random number off remaining numbers
           // then also removed the isolated number, and produce new guess variables for
-          console.log('SO THIS WAS SKIPPED', guessLoc)
+          // console.log('SO THIS WAS SKIPPED', guessLoc)
           numGuessAdv = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
           indexGuessAdv = lessNumbers.indexOf(Number(numGuessAdv))
           compGuessLAdv = 'gridP' + numGuessAdv
@@ -822,7 +818,7 @@ function init() {
         scoreP -= 100
         guessLoc.classList.add('hit')
         lastHitLocation = guessLoc.id
-        console.log('They hit our ' + guessClass + '!')
+        window.alert('They hit our ' + guessClass + '!')
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
           searchAndDestroy(hunting, 'hit')
           if (hunting === false){
@@ -833,13 +829,14 @@ function init() {
         }
 
         if(damagedShip.damage === damagedShip.hitPoints){ // IF A SHIP IS TOTALLY DESTROYED BY A HIT
-          console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
+          window.alert(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
           scoreP -= 100
           damagedShip.destroyed = true
           destroyedShipsP.push(guessClass)
           // THIS ENDS THE GAME
           if (destroyedShipsP.length === 5){
-            console.log("They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " THE COMPUTER TOOK " + cGuesses + " TO WIN.")
+            // can shush this up a bit
+            window.alert("They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " The enemy " + cGuesses + " to win.")
             winner = 'computer'
           }
 
@@ -867,10 +864,10 @@ function init() {
           if (damagedShip.damage === (damagedShip.lengthS-1)){
             warning = " It is critically damaged!"
           }
-          console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
+          window.alert(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
     } else if (!guessLoc.classList.contains('hit') && !guessLoc.classList.contains('miss')){ // IF A COMPUTER'S GUESS MISSES A SHIP
-      console.log('They missed us Admiral!' ) //+ guessLoc.id
+      window.alert('They missed us Admiral!' ) //+ guessLoc.id
       if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
         // *** MAJOR PROBLEM HERE *** console.log('after a couple hits and a miss does this run?') //*** MAJOR PROBLEM HERE***
         searchAndDestroy(hunting, 'miss')
@@ -881,7 +878,6 @@ function init() {
 
   // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){} IMPLEMENT ONLY AFTER I'M DONE TWEAKING GAMEPLAY
   function playerGuess(event) {
-    
     let eT = event.target
     let guessClass = eT.className
     if (event.target.tagName === 'IMG'){
@@ -901,7 +897,7 @@ function init() {
         destroyedShipsC.push(guessClass)
         scoreP += 100
         damagedShip.destroyed = true
-        console.log('passing in this element', document.querySelector(`#${damagedShip.startLocation} img`))
+        // console.log('passing in this element', document.querySelector(`#${damagedShip.startLocation} img`))
         document.querySelector(`#${damagedShip.startLocation} img`).style.display = 'flex'
         if (destroyedShipsC.length === 5){
           console.log(`We have destroyed their fleet! Victory is ours! Your score: ${scoreP}`)
@@ -939,6 +935,7 @@ function init() {
   // ~~~~~   MENU BUTTON FUNCTIONS   ~~~~~~
 
   function fightButton(){
+    if(window.confirm('Are we ready for battle Admiral?')){
     disGssGrd.style.display = 'flex'
     fightB.disabled = true
     shipSelector.disabled = true
@@ -946,15 +943,19 @@ function init() {
     fightB.style.display = 'none'
     quitB.style.display = 'unset'
     quitB.disabled = false
+    doubleWrapper.style.flexDirection = 'row-reverse'
+    }
   }
 
   function rotateButton(){
-    rotateShip(selectedShip, 'P')
+    if(window.confirm(`Would you like to reposition our ${selectedShip.classS.slice(0,-1)}?`)){
+      rotateShip(selectedShip, 'P')
+    }
   }
 
   function setDifficulty(event){
+    if(window.confirm(`Difficulty level set to: ${event.target.id}`)){
     difficultyLevel = event.target.id
-    console.log(`Difficulty level set to: ${difficultyLevel}`)
     if (event.target.id === 'hard'){
       document.getElementById('hard').style.color = 'green'
       document.getElementById('easy').disabled = true
@@ -970,6 +971,7 @@ function init() {
     }
     startB.disabled = false
   }
+  }
   
   function startButton(){
     if (difficultyLevel.length > 0){
@@ -979,7 +981,7 @@ function init() {
       fightB.disabled = false
       gridSel.style.display = 'flex'
       difficultyLevels.forEach(btn=> btn.disabled=true)
-      console.log('Begin Placement Phase')
+      window.alert("We're under attack! Organize out fleet for defense!")
 
       allShips.forEach(ship => {
         if (ship.classS.split('').includes('P')){
@@ -990,9 +992,9 @@ function init() {
           placeShip(ship, '')
         }
         })
-        
+
       } else {
-      console.log('choose a difficulty level first')
+      window.alert('You must choose a difficulty level first!')
     }
   }
 

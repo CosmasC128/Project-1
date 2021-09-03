@@ -12,14 +12,17 @@ body{
   font-family: 'Black Ops One', 'sans-serif';
 }
 
+.doubleWrapper{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 .grid-wrapper, .grid-wrapper-player {
   height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  
+  margin: 20px;
 }
 
 .grid-wrapper{
