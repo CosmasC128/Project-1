@@ -25,6 +25,7 @@ function init() {
 
   // HTML ELEMENT REFERENCES
   const startB = document.getElementById('start')
+  const titleB = document.getElementById('titleB')
   const rotateB = document.getElementById('rotate')
   const gridSel = document.querySelector('.gridP')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
@@ -1000,6 +1001,7 @@ function init() {
   
   function startButton(){
     if (difficultyLevel.length > 0){
+      titleB.style.display = 'none'
       startB.disabled = true
       rotateB.disabled = false
       shipSelector.disabled = false

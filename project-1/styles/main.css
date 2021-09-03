@@ -12,6 +12,21 @@ body{
   font-family: 'Black Ops One', 'sans-serif';
 }
 
+#titleB{
+  font-size: 70px;
+  text-shadow: 2px 2px lightblue;
+  background-image: url('../Assets/decking.png');
+  border-radius: 10px;
+  border: 2.5px solid darkgray;
+  margin: 0 auto;
+  align-items: center;
+  text-align: center;
+  margin-top: 20px;
+  width: 700px;
+  border-radius: 10px;
+  border: 2.5px solid rgb(38, 38, 38);
+}
+
 .doubleWrapper{
   display: flex;
   flex-direction: column-reverse;
