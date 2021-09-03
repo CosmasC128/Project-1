@@ -19,10 +19,12 @@ body{
   align-items: center;
   margin-top: 20px;
   margin-bottom: 20px;
+  
 }
 
 .grid-wrapper{
   display: none;
+  /* transition: display 2s; */
 }
 
 
@@ -143,6 +145,7 @@ h1{
 
 .grid div{
   border: 1px dotted rgba(66, 254, 4, 0.571);
+  cursor: url('../Assets/reticule-green.png'), auto;
 }
 
 /* SHIPS AND SUPPLEMENTARY CLASSES SUCH AS HIT AND MISS */
@@ -163,6 +166,7 @@ h1{
   content: url('../Assets/hit1.png');
   background-size: 100%;
   z-index: 1;
+  /* transition: content 2s; */
 }
 
 .miss {
@@ -170,6 +174,7 @@ h1{
   content: url('../Assets/best-smoke.png');
   background-size: 105%;
   z-index: 1;
+  /* transition: content 2s; */
 }
 
 /* COMPUTER SHIPS */
@@ -195,49 +200,3 @@ h1{
 }
 
 /* PLAYER SHIPS */
-
-/* ONLY START LOCATION SHOULD BE TAGGED WITH A CLASS AND THE CLASS  */
-/* SHOULD INCLUDE VERTICAL OR HORIZONTAL AND THE IMAGE IS NOT CONTAINED BY THE SQUARE IT SPAWNS FROM */
-/* KEEP IN MIND SQUARES ARE 60PX */
-
-.carrierP{
-  /* background-image: url('../Assets/carrier-vertical.png');
-  height: 300px;
-  width: 60px;
-  position: relative; */
-}
-
-.battleshipP{
-  /* background-image: url('../Assets/battleship-vertical.png');
-  height: 240px;
-  width: 60px;
-  position: relative; */
-}
-
-.destroyerP{
-  /* content: url('../Assets/destroyer-vertical.png');
-  height: 180px;
-  width: 60px;
-  z-index: -1; */
-}
-
-.submarineP{
-  /* content: url('../Assets/patrolboat-vertical.png');
-  height: 180px;
-  width: 60px;
-  z-index: -1; */
-}
-
-.patrolboatP{
-  /* content: url('../Assets/patrolboat-vertical.png');
-  height: 120px;
-  width: 60px;
-  z-index: -1; */
-}
-
-/* NEED ENDGAME MENU STUFF HERE */
-/* AND OR ALERT PROMPT STYLING */
-
-/* .alert{
-
-} */

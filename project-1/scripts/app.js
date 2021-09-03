@@ -472,7 +472,9 @@ function init() {
   let lastPair2= []
 
   function isIsolated(compGuessLAdv){
-    // this should RETURN TRUE if NSEW are all full of a guess/hit or off the edge
+    // this should RETURN TRUE if NSEW are all full of a miss or off the edge
+    // NEEDS TO BE EXAMINED ONE MORE TIME
+    // just fixed one bug at least! that might have just been it...
     
     let edgesS = 0
     let cgNum = Number(compGuessLAdv.slice(-2))
@@ -496,7 +498,7 @@ function init() {
     if(Math.floor(cgNum+1)%10 === 0 || guessElemE.classList.contains('miss')){ // has and EDGE EAST OR MISS EAST
       edgesS++
     }
-    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemE.classList.contains('miss')){ // has and EDGE WEST OR MISS WEST
+    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.classList.contains('miss')){ // has and EDGE WEST OR MISS WEST
       edgesS++
     }
     
@@ -512,7 +514,7 @@ function init() {
 
     if (hunting === true && guessStatus === 'hit'){
       lastPair2 = [ document.getElementById(lastHitLocation).className, lastHitLocation]
-      console.log(lastPair2, 'last Pair2 assigned here')
+      // console.log(lastPair2, 'last Pair2 assigned here')
       hitStreak++
     }
 
@@ -523,9 +525,9 @@ function init() {
     // if they're differen't classes, two different ships, when you destroy a ship,
     // you'll come back to the first one you hit and try to finish it off
     if (oriPair1.length === 2 && lastPair2.length === 2 && oriPair1[0] != lastPair2[0]){
-      console.log((oriPair1[0] != lastPair2[0]), oriPair1, lastPair2, 'comparison of the two pairs')
+      // console.log((oriPair1[0] != lastPair2[0]), oriPair1, lastPair2, 'comparison of the two pairs')
       comeBack = oriPair1
-      console.log(comeBack, 'comeBack')
+      // console.log(comeBack, 'comeBack')
     }
     // CODE THAT ACTUALLY DOES WORK
     let hitNumber = Number(lastHitLocation.slice(-2))
@@ -601,7 +603,7 @@ function init() {
     if (hunting === false && guessStatus === 'hit'){
       
       oriPair1 = [ document.getElementById(lastHitLocation).className, lastHitLocation]
-      console.log(oriPair1, 'oriPair1 assigned here within first if clause')
+      // console.log(oriPair1, 'oriPair1 assigned here within first if clause')
       
       if ( getRandomInt(2) === 1){
         if(Number(lastHitLocation.slice(-1))> 0){
@@ -629,7 +631,6 @@ function init() {
         if(Number(lastHitLocation.slice(-1))< 9){
           huntingLocations.push(eat)
         }
-
       }
 
       huntingLocationsFiltered = huntingLocations.filter(loc => !guessedNumbers.includes(Number(loc.slice(-2))))
@@ -821,11 +822,11 @@ function init() {
         scoreP -= 100
         guessLoc.classList.add('hit')
         lastHitLocation = guessLoc.id
-        console.log('they hit our ' + guessClass + ' at ' + guessLoc.id)
+        console.log('They hit our ' + guessClass + '!')
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
           searchAndDestroy(hunting, 'hit')
           if (hunting === false){
-            console.log('hunting triggered! ' + guessLoc.id)
+            // console.log('hunting triggered! ' + guessLoc.id)
             hunting = true
           }
           
@@ -854,9 +855,9 @@ function init() {
           
           // *** COMEBACK TWO SHIP CODE
           if (comeBack.length > 0){
-            console.log('COMEBACK TO ME CODE RAN HERE')
+            // console.log('COMEBACK TO ME CODE RAN HERE')
             lastHitLocation = comeBack[1]
-            console.log(lastHitLocation, 'last hit', comeBack[1], 'comeback item one(not item zero)')
+            // console.log(lastHitLocation, 'last hit', comeBack[1], 'comeback item one(not item zero)')
             searchAndDestroy(false, 'hit')
             comeBack = []
           }
@@ -869,9 +870,9 @@ function init() {
           console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
     } else if (!guessLoc.classList.contains('hit') && !guessLoc.classList.contains('miss')){ // IF A COMPUTER'S GUESS MISSES A SHIP
-      console.log('They missed us Admiral!' + guessLoc.id)
+      console.log('They missed us Admiral!' ) //+ guessLoc.id
       if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
-        console.log('after a couple hits and a miss does this run?')
+        // *** MAJOR PROBLEM HERE *** console.log('after a couple hits and a miss does this run?') //*** MAJOR PROBLEM HERE***
         searchAndDestroy(hunting, 'miss')
       }
       guessLoc.classList.add('miss')
@@ -887,7 +888,6 @@ function init() {
       let parentNode = event.target.parentNode
       eT = parentNode
       guessClass = eT.className
-      console.log(eT, guessClass)
     }
 
     if (!eT.classList.contains('hit') && computerClasses.includes(guessClass)){
@@ -914,15 +914,25 @@ function init() {
         computerGuess()
       }
     } else if (eT.classList.contains('hit')){
-      console.log('We already hit here. Choose new coordinates Admiral...')
+      console.log('We already hit there. Choose new coordinates Admiral...')
     } else if (!eT.classList.contains('miss') && !eT.classList.contains('hit')){
       console.log('We missed Admiral!')
       eT.classList.add('miss')
       computerGuess()
-      computerGuess()
-      computerGuess()
+      // EXTRA GUESSES TO DO AI BUG FIXIN'
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      
     } else if (eT.classList.contains('miss')){
-      console.log('We already missed here. Choose new coordinates Admiral...')
+      console.log('We already missed there. Choose new coordinates Admiral...')
     }
   }
 
@@ -936,9 +946,6 @@ function init() {
     fightB.style.display = 'none'
     quitB.style.display = 'unset'
     quitB.disabled = false
-
-    // GAME PLAY LOOP HERE FOR NOW
-    // not sure if there will be another gameplay loop after this
   }
 
   function rotateButton(){
@@ -983,8 +990,7 @@ function init() {
           placeShip(ship, '')
         }
         })
-      
-    
+        
       } else {
       console.log('choose a difficulty level first')
     }
