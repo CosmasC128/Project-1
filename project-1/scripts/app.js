@@ -314,10 +314,7 @@ function init() {
           }
         }
       }
-      // if (truArray.includes(true)){
-        // console.log('cannot spawn something below ' + ship.classS + ' ' + ship.startLocation)
-        // continue
-      // }
+
       return truArray
     } else { // HORIZONTAL ORIENTATION
       let truArray = []
@@ -328,17 +325,14 @@ function init() {
         } else {
           let standInVert = document.getElementById('grid'+ letter + parseShipL(ship, i)).className
           // console.log('grid' + parseShipL(ship, i), document.getElementById('grid' + parseShipL(ship, i)), 'middle standinvert', standInVert)
-          if (shipClasses.includes(standInVert)){
+          if (shipClasses.includes(standInVert) && ship.classS != standInVert){ // it, itself, does not invalidate, due to grid movement. In normal circumstances there won't two of the same ship!
             truArray.push(true)
           } else {
             truArray.push(false)
           }
         }
       }
-      // if (truArray.includes(true)){
-        // console.log('cannot spawn blocking on the right ' + ship.classS + ' ' +ship.startLocation)
-        // continue
-      // }
+
       return truArray
     }
   }
@@ -464,6 +458,11 @@ function init() {
   
   function gridMove(event){
     //do the code only if we're in strategy phase
+    let strayImg = document.querySelectorAll('.gridP div img')
+    if (strayImg.length > 0){
+      strayImg.forEach(img=> img.remove())
+    }
+    playersShips.forEach(ship=> placeShip(ship,'P'))
     locationToEliminate = selectedShip.startLocation
     if(startB.disabled === true && fightB.disabled === false){  
       const key = event.keyCode // event.keyCode is the unique code for the key that was pressed
@@ -477,25 +476,21 @@ function init() {
       let backUpStart = selectedShip.startLocation
       if (key === right){
         if(parseShipL(selectedShip, 1)%10 === 0){
-          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 1)
         }
       } else if (key === left){
         if(Number(selectedShip.startLocation.slice(-1)) <= 0){
-          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else {
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
         }
       } else if (key === up){
         if(parseShipL(selectedShip, -10) <= 0){
-          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
         }
       } else if (key === down){
         if(parseShipL(selectedShip, 10) >= 100){
-          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
         }
