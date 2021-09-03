@@ -552,43 +552,50 @@ function init() {
 
   function isIsolated(compGuessLAdv){
     // this should RETURN TRUE if NSEW are all full of a miss or off the edge
-    
-    let edgesS = 0
-    let cgNum = Number(compGuessLAdv.slice(-2))
-    
-    let neverS = 'gridP' + doubleDigits(cgNum-10)
-    let eatS = 'gridP' + doubleDigits(cgNum+1)
-    let shreddedS = 'gridP' + doubleDigits(cgNum+10)
-    let wheatS = 'gridP' + doubleDigits(cgNum-1)   
-    
-    let guessElemN = document.getElementById(neverS)
-    let guessElemS = document.getElementById(shreddedS)
-    let guessElemE = document.getElementById(eatS)
-    let guessElemW = document.getElementById(wheatS)
+    try {
+      let edgesS = 0
+      let cgNum = Number(compGuessLAdv.slice(-2))
+      let neverS = ''
+      let eatS= ''
+      let shreddedS = ''
+      let wheatS = ''
+    neverS = 'gridP' + doubleDigits(cgNum-10)
+    eatS = 'gridP' + doubleDigits(cgNum+1)
+    shreddedS = 'gridP' + doubleDigits(cgNum+10)
+    wheatS = 'gridP' + doubleDigits(cgNum-1)   
+      
+      let guessElemN = document.getElementById(neverS)
+      let guessElemS = document.getElementById(shreddedS)
+      let guessElemE = document.getElementById(eatS)
+      let guessElemW = document.getElementById(wheatS)
 
-    if( Math.floor(cgNum/10) === 0 || guessElemN.classList.contains('miss')){ // has and EDGE NORTH OR MISS NORTH
-      edgesS++
-    }
-    if( Math.floor(cgNum/10) === 9 || guessElemS.classList.contains('miss')){ // has and EDGE SOUTH OR MISS SOUTH
-      edgesS++
-    }
-    if(Math.floor(cgNum+1)%10 === 0 || guessElemE.classList.contains('miss')){ // has and EDGE EAST OR MISS EAST
-      edgesS++
-    }
-    if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.classList.contains('miss')){ // has and EDGE WEST OR MISS WEST
-      edgesS++
-    }
-    
-    if (edgesS === 4){
-      return true
-    } else {
+      if( Math.floor(cgNum/10) === 0 || guessElemN.classList.contains('miss')){ // has and EDGE NORTH OR MISS NORTH
+        edgesS++
+      }
+      if( Math.floor(cgNum/10) === 9 || guessElemS.classList.contains('miss')){ // has and EDGE SOUTH OR MISS SOUTH
+        edgesS++
+      }
+      if(Math.floor(cgNum+1)%10 === 0 || guessElemE.classList.contains('miss')){ // has and EDGE EAST OR MISS EAST
+        edgesS++
+      }
+      if(Math.floor(cgNum-1)%10 === 9 || cgNum === 0 || guessElemW.classList.contains('miss')){ // has and EDGE WEST OR MISS WEST
+        edgesS++
+      }
+      
+      if (edgesS === 4){
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      console.log('Enemy hardware malfunction!')
       return false
     }
   }
 
   function searchAndDestroy(hunting, guessStatus){
-    // console.log(hunting, 'hunting', guessStatus, 'guess status', 'these are the variables passed in when S&D was run')
-
+  try {
+      
     if (hunting === true && guessStatus === 'hit'){
       lastPair2 = [ document.getElementById(lastHitLocation).className, lastHitLocation]
       // console.log(lastPair2, 'last Pair2 assigned here')
@@ -821,6 +828,11 @@ function init() {
     if (hunting === false){
       originalHitLocation = lastHitLocation
     }
+  } catch (error) {
+    console.log('The enemy computer systems went haywire after our last hit!')
+    let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
+    huntingGuess = 'VgridP' + randomHuntingGuess
+  }
   }
 
   function computerGuess(){
@@ -1021,15 +1033,15 @@ function init() {
       computerGuess()
       // EXTRA GUESSES TO DO AI BUG FIXIN'
       computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
       
     } else if (eT.classList.contains('miss')){
       window.alert('We already missed there. Choose new coordinates Admiral...')
