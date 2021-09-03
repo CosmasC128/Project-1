@@ -154,22 +154,22 @@ h1{
 
 /* EXTRA CLASSES FOR DAMAGE / MISS / DESTROYED BOAT */
 
-/* .destroyed {
+.destroyed {
   opacity: none;
-} */
+}
 
 .hit{
-  background-color: 'red';
   opacity: .9;
-  background-image: url('../Assets/hit1.png');
+  content: url('../Assets/hit1.png');
   background-size: 100%;
+  z-index: 1;
 }
 
 .miss {
-  background-color: grey;
   opacity: .9;
-  background-image: url('../Assets/best-smoke.png');
-  background-size: 100%;
+  content: url('../Assets/best-smoke.png');
+  background-size: 105%;
+  z-index: 1;
 }
 
 /* COMPUTER SHIPS */
@@ -201,33 +201,38 @@ h1{
 /* KEEP IN MIND SQUARES ARE 60PX */
 
 .carrierP{
-  background-color: rgba(255, 0, 0, 0.75);
-  background-image: url('../Assets/carrier-vertical.png');
-  background-image: contain;
+  /* background-image: url('../Assets/carrier-vertical.png');
+  height: 300px;
+  width: 60px;
+  position: relative; */
 }
 
 .battleshipP{
-  background-color: rgba(4, 0, 255, 0.75);
-  background-image: url('../Assets/battleship-vertical.png');
-  background-image: contain;
+  /* background-image: url('../Assets/battleship-vertical.png');
+  height: 240px;
+  width: 60px;
+  position: relative; */
 }
 
 .destroyerP{
-  background-color: rgba(0, 255, 94, 0.75);
-  background-image: url('../Assets/destroyer-vertical.png');
-  background-image: contain;
+  /* content: url('../Assets/destroyer-vertical.png');
+  height: 180px;
+  width: 60px;
+  z-index: -1; */
 }
 
 .submarineP{
-  background-color: rgba(255, 234, 0, 0.75);
-  background-image: url('../Assets/patrolboat-vertical.png');
-  background-image: contain;
+  /* content: url('../Assets/patrolboat-vertical.png');
+  height: 180px;
+  width: 60px;
+  z-index: -1; */
 }
 
 .patrolboatP{
-  background-color: rgba(128, 0, 255, 0.75);
-  background-image: url('../Assets/patrolboat-vertical.png');
-  background-image: contain;
+  /* content: url('../Assets/patrolboat-vertical.png');
+  height: 120px;
+  width: 60px;
+  z-index: -1; */
 }
 
 /* NEED ENDGAME MENU STUFF HERE */

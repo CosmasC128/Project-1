@@ -234,15 +234,47 @@ function init() {
   }
 
   function placeShip(ship, letter){
+    
     if (ship.orientation === 'vertical'){
-
-      // ADD IN PUSHING SHIP IMAGE CLASS VERT AND HORIZONTAL TO SHIP STARTLOCATIONS
-      // document.getElementById(ship.startLocation).classList.add()
-
+      //vertical image goes here
+      let star = ship.startLocation
+      let img = document.createElement('img') 
+      img.src = `./Assets/${ship.classS.slice(0,-1)}-vertical.png`
+      let src = document.getElementById(star)
+      src.appendChild(img)
+      let shipReference = document.querySelector(`#${ship.startLocation} img`)
+      if (ship.classS.includes('P')){
+        shipReference.style.width = '60px'
+        shipReference.style.height = `${60*ship.lengthS}px`
+        shipReference.style.zIndex = '0' 
+      } else {
+        shipReference.style.width = '60px'
+        shipReference.style.height = `${60*ship.lengthS}px`
+        shipReference.style.zIndex = '0' 
+        shipReference.style.display = 'none'
+        // console.log(document.querySelector(`#${ship.startLocation} img`), 'img grabbed to make it display none')
+      }
       for (let i = 0; i < ship.lengthS;i++){
         document.getElementById(`grid${letter}${parseShipL(ship, i*10)}`).classList.add(ship.classS)
       }
-    } else {
+    } else { // MAKE SURE THE HORIZONTAL CODE IS THE SAME AS THE VERTICAL
+      let star = ship.startLocation
+      let img = document.createElement('img') 
+      img.src = `./Assets/${ship.classS.slice(0,-1)}-horizontal.png`
+      let src = document.getElementById(star)
+      src.appendChild(img)
+      let shipReference = document.querySelector(`#${ship.startLocation} img`)
+      if (ship.classS.includes('P')){
+        shipReference.style.width = `${60*ship.lengthS}px`
+        shipReference.style.height = '60px'
+        shipReference.style.zIndex = '0' 
+      } else {
+        shipReference.style.width = `${60*ship.lengthS}px`
+        shipReference.style.height = '60px'
+        shipReference.style.zIndex = '0'
+        shipReference.style.display = 'none'
+        // console.log(document.querySelector(`#${ship.startLocation} img`), 'img grabbed to make it display none')
+      }
       for (let i = 0; i < ship.lengthS;i++){
         document.getElementById(`grid${letter}${parseShipL(ship, i)}`).classList.add(ship.classS)
       }
@@ -383,6 +415,7 @@ function init() {
       if (ship.orientation === 'vertical') {
         let gridLoc = 'grid' + letter + doubleDigits(getRandomInt(100-(((ship.lengthS-1)*10))))
         let getEl = document.getElementById(gridLoc)
+      
         if (shipClasses.includes(getEl.className)){
           continue
         } else {
@@ -847,9 +880,17 @@ function init() {
 
   // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){} IMPLEMENT ONLY AFTER I'M DONE TWEAKING GAMEPLAY
   function playerGuess(event) {
-    const eT = event.target
-    const guessClass = eT.className
-    if (!eT.classList.contains('hit') && computerClasses.includes(guessClass) ){
+    
+    let eT = event.target
+    let guessClass = eT.className
+    if (event.target.tagName === 'IMG'){
+      let parentNode = event.target.parentNode
+      eT = parentNode
+      guessClass = eT.className
+      console.log(eT, guessClass)
+    }
+
+    if (!eT.classList.contains('hit') && computerClasses.includes(guessClass)){
       let damagedShip = computerShips[computerClasses.indexOf(guessClass)]
       damagedShip.damage++
       scoreP += 100
@@ -860,6 +901,8 @@ function init() {
         destroyedShipsC.push(guessClass)
         scoreP += 100
         damagedShip.destroyed = true
+        console.log('passing in this element', document.querySelector(`#${damagedShip.startLocation} img`))
+        document.querySelector(`#${damagedShip.startLocation} img`).style.display = 'flex'
         if (destroyedShipsC.length === 5){
           console.log(`We have destroyed their fleet! Victory is ours! Your score: ${scoreP}`)
           winner = 'player'
