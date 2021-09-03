@@ -301,7 +301,7 @@ function init() {
     if (ship.orientation === 'vertical'){
       let truArray = []
       // console.log(ship.classS, ship.orientation, ship.startLocation, 'from vertical validate spawn')
-      for (let i = 1; i < ship.lengthS;i++){
+      for (let i = 1; i <= ship.lengthS;i++){
         if (document.getElementById(`grid${letter}${parseShipL(ship, i*10)}`) === null){
             truArray.push(true)
         } else {
@@ -319,20 +319,20 @@ function init() {
         // continue
       // }
       return truArray
-    } else {
+    } else { // HORIZONTAL ORIENTATION
       let truArray = []
       // console.log(ship.classS, ship.orientation, ship.startLocation, 'from horizontal validate spawn')
-      for (let i = 1; i < ship.lengthS;i++){
+      for (let i = 1; i<+ship.lengthS;i++){
         if (Math.floor(parseShipL(ship, i)/10) > Math.floor(parseShipL(ship, 0)/10)){
           truArray.push(true)
+        } else {
+          let standInVert = document.getElementById('grid'+ letter + parseShipL(ship, i)).className
+          // console.log('grid' + parseShipL(ship, i), document.getElementById('grid' + parseShipL(ship, i)), 'middle standinvert', standInVert)
+          if (shipClasses.includes(standInVert)){
+            truArray.push(true)
           } else {
-            let standInVert = document.getElementById('grid'+ letter + parseShipL(ship, i)).className
-            // console.log('grid' + parseShipL(ship, i), document.getElementById('grid' + parseShipL(ship, i)), 'middle standinvert', standInVert)
-            if (shipClasses.includes(standInVert)){
-              truArray.push(true)
-            } else {
-              truArray.push(false)
-            }
+            truArray.push(false)
+          }
         }
       }
       // if (truArray.includes(true)){
@@ -471,6 +471,7 @@ function init() {
       const left = 37
       const up = 38
       const down = 40
+      const space = 32
       // throw in a space bar id number here and then put space bar causes a rotation?
       // console.log(Number(selectedShip.startLocation.slice(-1)), 'something weird here going west')
       let backUpStart = selectedShip.startLocation
@@ -498,16 +499,21 @@ function init() {
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
         }
-      } else {
-        window.alert('INVALID KEY: use the arrow keys!')
+      }else if (key === space) { 
+        rotateButton()
+      }else {
+        window.alert('INVALID KEY: use the arrow keys to move and space bar to rotate!')
       }
-      if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
-        window.alert('The ship cannot move there Admiral!' + selectedShip.startLocation, "location can't be moved into")
-        selectedShip.startLocation = backUpStart
-      } else { // if true was not return, then you're all clear to move to the new updated starting location
-        unplaceShipMove(selectedShip)
-        placeShip(selectedShip, 'P')
+      if (locationToEliminate !== selectedShip.startLocation){
+        if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
+          window.alert('The ship cannot move there Admiral!')
+          // selectedShip.startLocation = backUpStart
+        } else { // if true was not return, then you're all clear to move to the new updated starting location
+          unplaceShipMove(selectedShip)
+          placeShip(selectedShip, 'P')
+        }
       }
+
     }
   }
 
@@ -1003,23 +1009,22 @@ function init() {
     } else if (eT.classList.contains('hit')){
       window.alert('We already hit there. Choose new coordinates Admiral...')
     } else if (!eT.classList.contains('miss') && !eT.classList.contains('hit')){
-      window.alert('We missed Admiral!')
       eT.classList.add('miss')
       computerGuess()
       // EXTRA GUESSES TO DO AI BUG FIXIN'
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
       
     } else if (eT.classList.contains('miss')){
-      console.log('We already missed there. Choose new coordinates Admiral...')
+      window.alert('We already missed there. Choose new coordinates Admiral...')
     }
   }
 
