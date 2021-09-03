@@ -835,9 +835,8 @@ function init() {
     let warning = ''
     let loopBreaker = 0
     if (lessNumbers.length <= 10){
-      lessNumbers2 = lessNumbers
-      lessNumbers = lessNumbers2.concat(backUpNumbers)
-    
+      lessNumbers2 = lessNumbers.concat(backUpNumbers)
+      lessNumbers = lessNumbers2
     }
 
     // ~~~~~~~~   MODULAR GUESS INFORMATION HERE   ~~~~~~~~
@@ -899,9 +898,6 @@ function init() {
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
     guessedNumbers.push(Number(guessLoc.id.slice(-2)))
-    console.log(guessLoc, 'guess location', guessedNumbers, 'guessed numbers at this time')
-    console.log(lessNumbers, 'less numbers(!)')
-    
     // ESSENTIAL FOR TRACKING GUESSES FOR FILTERING HUNTING LOCATION ARRAYS
     if (!guessLoc.classList.contains('hit') && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
