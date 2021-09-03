@@ -472,29 +472,29 @@ function init() {
       const up = 38
       const down = 40
       // throw in a space bar id number here and then put space bar causes a rotation?
-      console.log(Number(selectedShip.startLocation.slice(-1)), 'something weird here going west')
+      // console.log(Number(selectedShip.startLocation.slice(-1)), 'something weird here going west')
       let backUpStart = selectedShip.startLocation
       if (key === right){
         if(parseShipL(selectedShip, 1)%10 === 0){
-          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 1), "location can't be moved into from")
+          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 1)
         }
       } else if (key === left){
         if(Number(selectedShip.startLocation.slice(-1)) <= 0){
-          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, -1), "location can't be moved into")
+          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else {
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
         }
       } else if (key === up){
         if(parseShipL(selectedShip, -10) <= 0){
-          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, -10), "location can't be moved into")
+          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
         }
       } else if (key === down){
         if(parseShipL(selectedShip, 10) >= 100){
-          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 10), "location can't be moved into")
+          window.alert('The ship cannot move there Admiral! That location can not be moved into')
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
         }
@@ -502,7 +502,7 @@ function init() {
         window.alert('INVALID KEY: use the arrow keys!')
       }
       if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
-        console.log('The ship cannot move there Admiral!' + selectedShip.startLocation, "location can't be moved into")
+        window.alert('The ship cannot move there Admiral!' + selectedShip.startLocation, "location can't be moved into")
         selectedShip.startLocation = backUpStart
       } else { // if true was not return, then you're all clear to move to the new updated starting location
         unplaceShipMove(selectedShip)
@@ -956,6 +956,7 @@ function init() {
   }
 
   function playerGuess(event) {
+    pGuesses++
     let eT = event.target
     let guessClass = eT.className
     if (event.target.tagName === 'IMG'){
@@ -1002,20 +1003,20 @@ function init() {
     } else if (eT.classList.contains('hit')){
       window.alert('We already hit there. Choose new coordinates Admiral...')
     } else if (!eT.classList.contains('miss') && !eT.classList.contains('hit')){
-      console.log('We missed Admiral!')
+      window.alert('We missed Admiral!')
       eT.classList.add('miss')
       computerGuess()
       // EXTRA GUESSES TO DO AI BUG FIXIN'
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
       
     } else if (eT.classList.contains('miss')){
       console.log('We already missed there. Choose new coordinates Admiral...')
