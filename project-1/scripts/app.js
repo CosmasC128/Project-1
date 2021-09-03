@@ -24,6 +24,7 @@ function init() {
   let difficultyLevel = ''
 
   // HTML ELEMENT REFERENCES
+  const menuButtons = document.querySelectorAll('.menuButtons')
   const startB = document.getElementById('start')
   const titleB = document.getElementById('titleB')
   const titleC = document.getElementById('titleC')
@@ -525,7 +526,7 @@ function init() {
   }
 
 
-  // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
+   // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
 
   // *** implement this only if I have finised my other styling work ***
   //    vii. NEEDS ONE MORE REFACTOR RE-HITS A 2ND SHIP WHILE HITTING THE FIRST SHIP
@@ -1106,6 +1107,12 @@ function init() {
   function fakeQuit(){
     location.reload()
   }
+  
+  // implement audio on clicks etc
+  // function menuClickSound(){
+  //   let audio = document.getElementById('menu-audio')
+  //   audio.play()
+  // }
 
   // ~~~~~   GAME PLAY SECTION END   ~~~~~~
 
@@ -1119,6 +1126,8 @@ function init() {
   quitB.addEventListener('click', fakeQuit)
   document.addEventListener('keydown', gridMove) // Listening for key press
 
+  // menuButtons.forEach(btn=> btn.addEventListener('click', menuClickSound()))
+  
 }
 
 window.addEventListener('DOMContentLoaded', init)

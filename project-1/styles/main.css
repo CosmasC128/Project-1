@@ -49,8 +49,14 @@ body{
   /* transition: display 2s; */
 }
 
-
+audio{
+  display: none;
+}
 /* MENU SECTION */
+
+/* .menuButtons{
+
+} */
 
 #rotationButtons{
   display: flex;
@@ -101,6 +107,7 @@ body{
   align-items: center;
   justify-content: space-between;
   margin: 0 auto;
+  margin-top: 25px;
   padding: 60px 20px 60px 20px;
   border-radius: 10px;
   border: 2.5px solid rgb(38, 38, 38);

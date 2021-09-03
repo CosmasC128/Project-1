@@ -11,23 +11,26 @@
   </head>
 
   <body>
-    <embed src="https://maritime.org/sound/sonobuoy2/record10.mp3" loop="true" autostart="true" width="2" heigh="0">
+    <!-- <audio id="destroyed" src="./Assets/destroyed.mp3"></audio>
+    <audio id="hit" src="./Assets/whistling-bomb.mp3"></audio>
+    <audio id="miss" src="./Assets/miss-sound.mp3"></audio> -->
     <div class="gameBar">
+      <audio id="menu-audio" src="./Assets/menu-click.wav"></audio>
       <div id="leftMenu">
-        <button id="start">Start Game</button>
+        <button class="menuButtons" id="start">Start Game</button>
         <div id="rotationButtons">
-          <button id="rotate">Rotate</button>
-          <button id="ship">Select Ship</button>
+          <button class="menuButtons" id="rotate">Rotate</button>
+          <button class="menuButtons" id="ship">Select Ship</button>
         </div>
-        <button id="fight">Fight!</button>
-        <button id="quit">Quit</button>
+        <button class="menuButtons" id="fight">Fight!</button>
+        <button class="menuButtons" id="quit">Quit</button>
       </div>
       <div id="rightMenu">
         <H1>Select Difficulty</H1>
         <div id="difficulty">
-          <button id="easy">Easy</button>
-          <button id="medium">Medium</button>
-          <button id="hard">Hard</button>
+          <button class="menuButtons" id="easy">Easy</button>
+          <button class="menuButtons" id="medium">Medium</button>
+          <button class="menuButtons" id="hard">Hard</button>
         </div>
       </div>  
     </div>
@@ -44,5 +47,7 @@
       </div>
     </div>
   </div>
+  <embed src="https://maritime.org/sound/sonobuoy2/record10.mp3" loop="true" autostart="true" width="2" heigh="0">
+
   </body>
 </html>
