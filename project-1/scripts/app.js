@@ -528,15 +528,6 @@ function init() {
 
    // ~~~~~~~~   PLAYER GUESSING AND AI GUESSING SECTION (FIGHT PHASE / CORE GAMEPLAY / ENDGAME)   ~~~~~~~~
 
-  // *** implement this only if I have finised my other styling work ***
-  //    vii. NEEDS ONE MORE REFACTOR RE-HITS A 2ND SHIP WHILE HITTING THE FIRST SHIP
-  //        aka, remember if you hit a 2nd ship, and if you destroy a ship, feed right back into destroying
-  //        secondary ship you hit. Should be implemented after ship destruction (feedback new start location)
-  //        if (2nd ship hit === true)  last hit location = 2ndshipLocation, run search and destroy (false/'hit')
-  // if you hit a ship store the class in a variable that resets on destroy, or next hit
-  // if you get a next hit and the classes don't match, load 2nd classes cooridinates into 2nd ship Location
-  // and toggle 2nd ship hit == true
-
   // SEARCH AND DESTROY GLOBAL CONSTANTS --- FEED INTO SEARCH AND DESTROY AND INTO COMPUTER GUESS
   let hunting = false
   let lastHitLocation = ''
@@ -837,13 +828,16 @@ function init() {
 
   function computerGuess(){
     // A FEW INITIALIZATIONS
+    
     cGuesses++
     let guessLoc = ''
     let guessClass = ''
     let warning = ''
     let loopBreaker = 0
-    if (lessNumbers.length === 0){
-      lessNumbers = backUpNumbers
+    if (lessNumbers.length <= 10){
+      lessNumbers2 = lessNumbers
+      lessNumbers = lessNumbers2.concat(backUpNumbers)
+    
     }
 
     // ~~~~~~~~   MODULAR GUESS INFORMATION HERE   ~~~~~~~~
@@ -904,7 +898,11 @@ function init() {
     }
 
     // PROCESSING THE GUESS SECTION (AS A HIT OR MISS OR A HIT THAT DESTROYS A SHIP)
-    guessedNumbers.push(Number(guessLoc.id.slice(-2))) // ESSENTIAL FOR TRACKING GUESSES FOR FILTERING HUNTING LOCATION ARRAYS
+    guessedNumbers.push(Number(guessLoc.id.slice(-2)))
+    console.log(guessLoc, 'guess location', guessedNumbers, 'guessed numbers at this time')
+    console.log(lessNumbers, 'less numbers(!)')
+    
+    // ESSENTIAL FOR TRACKING GUESSES FOR FILTERING HUNTING LOCATION ARRAYS
     if (!guessLoc.classList.contains('hit') && playerClasses.includes(guessClass) ){ // IF A COMPUTER'S GUESS HITS A SHIP
         let damagedShip = playersShips[playerClasses.indexOf(guessClass)]
         damagedShip.damage++
@@ -1032,16 +1030,32 @@ function init() {
       eT.classList.add('miss')
       computerGuess()
       // EXTRA GUESSES TO DO AI BUG FIXIN'
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
-      computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
+      // computerGuess()
       
     } else if (eT.classList.contains('miss')){
       window.alert('We already missed there. Choose new coordinates Admiral...')
