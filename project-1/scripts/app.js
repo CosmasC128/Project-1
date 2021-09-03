@@ -175,6 +175,7 @@ function init() {
   // FOR THE SELECTION AND ROTATION BUTTONS
   let currentShipIndex = 0
   let selectedShip = destroyerP
+  let locationToEliminate 
 
   // ~~~~~   GRID CONSTRUCTION AND UTILIZATION START ~~~~~~
   const grid = document.querySelector('.grid')
@@ -237,32 +238,14 @@ function init() {
     }
   }
 
-  function unplaceShipMove(ship, lastKey){
-    let classRelevant = selectedShip.classS
+  function unplaceShipMove(ship){
+    //probably should just get an 'old area code to pass into the deleter here'
+    let feedLocation = locationToEliminate
     const shipSquares = document.querySelectorAll(`.${ship.classS}`)
-    console.log(shipSquares, 'divs assigned classes for this ship')
     shipSquares.forEach(sqr => sqr.classList.contains(ship.classS) ? sqr.classList.remove(ship.classS) : console.log('swing and a miss, here was a problem before'))
-    let locW= 'gridP' + parseShipL(selectedShip, -1)
-    let locE = 'gridP' + parseShipL(selectedShip, 1)
-    let locN = 'gridP' + parseShipL(selectedShip, -10)
-    let locS = 'gridP' + parseShipL(selectedShip, 10)
-    let arrayThingV = [locN, locS]
-    let arrayThingH = [locE, locW]
-    if (lastKey === 37 || lastKey === 39){
-      array1or2 = arrayThingH
-    } else {
-      array1or2 = arrayThingV
-    }
-    console.log(arrayThingH, arrayThingV, 'this is inside the unplaceshipmove')
-    console.log(selectedShip.startLocation)
-    for (let i=0;i<array1or2.length;i++){
-      let imgRem = document.querySelector(`#${array1or2[i]} img`)
-      console.log(classRelevant)
-      console.log(document.getElementById(`#${ship.startLocation}`).className)
-      if (document.getElementById(`#${ship.startLocation}`).classList.contains(classRelevant) && imgRem != null){
-        imgRem.remove()
-      }
-
+    let imgRem = document.querySelector(`#${feedLocation} img`)
+    if (imgRem != null){
+      imgRem.remove()
     }
   }
 
@@ -481,57 +464,49 @@ function init() {
   
   function gridMove(event){
     //do the code only if we're in strategy phase
+    locationToEliminate = selectedShip.startLocation
     if(startB.disabled === true && fightB.disabled === false){  
       const key = event.keyCode // event.keyCode is the unique code for the key that was pressed
       const right = 39
       const left = 37
       const up = 38
       const down = 40
-      let lastKey = 0
       // throw in a space bar id number here and then put space bar causes a rotation?
-
+      console.log(Number(selectedShip.startLocation.slice(-1)), 'something weird here going west')
       let backUpStart = selectedShip.startLocation
       if (key === right){
         if(parseShipL(selectedShip, 1)%10 === 0){
-          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 1), "location can't be moved into")
+          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 1), "location can't be moved into from")
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 1)
-          lastKey = right
         }
       } else if (key === left){
-        if(Number(selectedShip.startLocation.slice(-1)) === 0){
+        if(Number(selectedShip.startLocation.slice(-1)) <= 0){
           console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, -1), "location can't be moved into")
-        } else if (Number(selectedShip.startLocation.slice(-1)) > 0){
-          selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
-          lastKey = left
         } else {
-          console.log('reread that programming')
+          selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
         }
       } else if (key === up){
-        if(parseShipL(selectedShip, -10) < 0){
+        if(parseShipL(selectedShip, -10) <= 0){
           console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, -10), "location can't be moved into")
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
-          lastKey = up
         }
       } else if (key === down){
         if(parseShipL(selectedShip, 10) >= 100){
           console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 10), "location can't be moved into")
         } else{
           selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
-          lastKey = down
         }
       } else {
         window.alert('INVALID KEY: use the arrow keys!')
       }
-      unplaceShipMove(selectedShip, lastKey)
       if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
         console.log('The ship cannot move there Admiral!' + selectedShip.startLocation, "location can't be moved into")
         selectedShip.startLocation = backUpStart
-        placeShip(selectedShip, 'P')
       } else { // if true was not return, then you're all clear to move to the new updated starting location
+        unplaceShipMove(selectedShip)
         placeShip(selectedShip, 'P')
-
       }
     }
   }
