@@ -234,7 +234,8 @@ function init() {
   }
 
   function placeShip(ship, letter){
-    
+    console.log('am i getting here off key presses')
+
     if (ship.orientation === 'vertical'){
       //vertical image goes here
       let star = ship.startLocation
@@ -454,6 +455,7 @@ function init() {
       const left = 37
       const up = 38
       const down = 40
+
       // throw in a space bar id number here and then put space bar causes a rotation?
       // have to mess with the code validation AKA every to the right of the &&
       // I DONT HAVE ANY WIDTH STUFF ANYWHERE
@@ -472,23 +474,32 @@ function init() {
       //   window.alert('INVALID KEY: use the arrow keys!')
       // }
 
+      console.log(selectedShip.startLocation, 'vanilla start location reference') 
+      // let shipNumba = Number(ship.startLocation.slice(-2))
       if (key === right){
-        selectedShip.startLocation = parseShipL(selectedShip, 1)
+        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 1)
+        console.log(selectedShip.startLocation, 'should be one more than the last thing consoled')
       } else if (key === left){
-        selectedShip.startLocation = parseShipL(selectedShip, -1)
+        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
+        console.log(selectedShip.startLocation, 'should be one less than the last thing consoled')
       } else if (key === up){
-        selectedShip.startLocation = parseShipL(selectedShip, -10)
+        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
+        console.log(selectedShip.startLocation, 'should be 10 less than the last thing consoled')
       } else if (key === down){
-        selectedShip.startLocation = parseShipL(selectedShip, 10)
+        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
+        console.log(selectedShip.startLocation, 'should be 10 higher than the last thing consoled')
       } else {
         window.alert('INVALID KEY: use the arrow keys!')
       }
       // spawn new boat off new location
+      //may have to dig into validate spawn here
       if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
-        window.alert('The ship cannot move there Admiral!')
+        console.log('The ship cannot move there Admiral!' + selectedShip.startLocation, "location can't be moved into")
       } else { // if true was not return, then you're all clear to move to the new updated starting location
-        unplaceShip(selectedShip)
-        placeShip(selectedShip, 'P')
+        
+        // supa risky forcin' it just to see!
+        // unplaceShip(selectedShip) //unplace is working fine
+        placeShip(selectedShip, 'P') // something is failing here
       }
     }
   }
@@ -1087,7 +1098,6 @@ function init() {
   fightB.addEventListener('click', fightButton)
   quitB.addEventListener('click', fakeQuit)
   document.addEventListener('keydown', gridMove) // Listening for key press
-
 
 }
 
