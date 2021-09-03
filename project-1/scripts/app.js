@@ -22,7 +22,6 @@ function init() {
   // BASIC GLOBAL GAME CONDITION VARIABLES
   let scoreP = 0
   let difficultyLevel = ''
-  let winner = ''
 
   // HTML ELEMENT REFERENCES
   const startB = document.getElementById('start')
@@ -30,6 +29,7 @@ function init() {
   const gridSel = document.querySelector('.gridP')
   const difficultyLevels = document.querySelectorAll('#difficulty button')
   const disGssGrd = document.querySelector('.grid-wrapper')
+  const disGssGrdP = document.querySelector('.grid-wrapper-player')
   const doubleWrapper = document.querySelector('.doubleWrapper')
   const fightB = document.getElementById('fight')
   const quitB = document.getElementById('quit')
@@ -208,6 +208,7 @@ function init() {
 
   // GRID BASED CONSTANTS
   const computerBoxes = document.querySelectorAll('.grid div')
+  // TESTING MY END GAMES
 
   // FUNCTIONS
 
@@ -465,6 +466,7 @@ function init() {
   let huntingLocations = []
   let hitStreak = 1
   let cGuesses = 0
+  let pGuesses = 0
   let comeBack = []
   let oriPair1= []
   let lastPair2= []
@@ -685,7 +687,7 @@ function init() {
 
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
-        console.log(huntingGuess, 'hunting guess after array construction')
+        // console.log(huntingGuess, 'hunting guess after array construction')
       } else {
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
@@ -715,7 +717,7 @@ function init() {
       huntingLocations = huntingLocationsFiltered
       if (huntingLocations.length > 0){
         huntingGuess = huntingLocations.pop()
-        console.log(huntingGuess, 'hunting guess after array construction')
+        // console.log(huntingGuess, 'hunting guess after array construction')
       } else {
         let randomHuntingGuess = doubleDigits(lessNumbers[getRandomInt(lessNumbers.length)])
         huntingGuess = 'VgridP' + randomHuntingGuess
@@ -818,7 +820,7 @@ function init() {
         scoreP -= 100
         guessLoc.classList.add('hit')
         lastHitLocation = guessLoc.id
-        window.alert('They hit our ' + guessClass + '!')
+        console.log('They hit our ' + guessClass + '!')
         if(difficultyLevel === 'medium' || difficultyLevel === 'hard'){
           searchAndDestroy(hunting, 'hit')
           if (hunting === false){
@@ -829,15 +831,27 @@ function init() {
         }
 
         if(damagedShip.damage === damagedShip.hitPoints){ // IF A SHIP IS TOTALLY DESTROYED BY A HIT
-          window.alert(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
+          console.log(`They destroyed our ${guessClass.slice(0,-1)} Admiral!`)
           scoreP -= 100
           damagedShip.destroyed = true
           destroyedShipsP.push(guessClass)
           // THIS ENDS THE GAME
           if (destroyedShipsP.length === 5){
             // can shush this up a bit
-            window.alert("They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " The enemy " + cGuesses + " to win.")
-            winner = 'computer'
+            disGssGrd.style.display = 'none'
+            disGssGrdP.style.display = 'none'
+            doubleWrapper.style.backgroundImage = "url('./Assets/loss-screen.png')"
+            doubleWrapper.style.backgroundSize = '750px 600px'
+            doubleWrapper.style.borderRadius = '20px'
+            doubleWrapper.style.border = '3px solid navy'
+            doubleWrapper.innerHTML = "They have destroyed our fleet! The day is lost! Your score: "+ scoreP + " The enemy took " + cGuesses + " guesses to win."
+            doubleWrapper.style.fontSize = '54px'
+            doubleWrapper.style.textShadow = '2px 2px green'
+            doubleWrapper.style.flexDirection = 'row'
+            doubleWrapper.style.textAlign = 'center'
+            doubleWrapper.style.alignItems = 'center'
+            doubleWrapper.style.width = '700px'
+            doubleWrapper.style.height = '600px'
           }
 
           // add a destroyed class here to the squares of the ship, so that CSS can display ship (change opacity) and maybe desroyed ship image loaded
@@ -864,10 +878,10 @@ function init() {
           if (damagedShip.damage === (damagedShip.lengthS-1)){
             warning = " It is critically damaged!"
           }
-          window.alert(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
+          console.log(`They hit our ${guessClass.slice(0,-1)} Admiral!${warning}`)
         }
     } else if (!guessLoc.classList.contains('hit') && !guessLoc.classList.contains('miss')){ // IF A COMPUTER'S GUESS MISSES A SHIP
-      window.alert('They missed us Admiral!' ) //+ guessLoc.id
+      console.log('They missed us Admiral!' ) //+ guessLoc.id
       if(hunting === true && (difficultyLevel === 'medium' || difficultyLevel === 'hard')){
         // *** MAJOR PROBLEM HERE *** console.log('after a couple hits and a miss does this run?') //*** MAJOR PROBLEM HERE***
         searchAndDestroy(hunting, 'miss')
@@ -876,7 +890,6 @@ function init() {
     }
   }
 
-  // if (confirm("Confirm Firing Coordinates. Choose wisely, they will return fire.")){} IMPLEMENT ONLY AFTER I'M DONE TWEAKING GAMEPLAY
   function playerGuess(event) {
     let eT = event.target
     let guessClass = eT.className
@@ -893,39 +906,51 @@ function init() {
       eT.classList.add('hit')
 
       if(damagedShip.damage === damagedShip.hitPoints){
-        console.log(`We destroyed their ${guessClass.slice(0,-1)} Admiral! One step closer to victory!`)
+        window.alert(`We destroyed their ${guessClass.slice(0,-1)} Admiral! One step closer to victory!`)
         destroyedShipsC.push(guessClass)
         scoreP += 100
         damagedShip.destroyed = true
         // console.log('passing in this element', document.querySelector(`#${damagedShip.startLocation} img`))
         document.querySelector(`#${damagedShip.startLocation} img`).style.display = 'flex'
         if (destroyedShipsC.length === 5){
-          console.log(`We have destroyed their fleet! Victory is ours! Your score: ${scoreP}`)
-          winner = 'player'
+          disGssGrd.style.display = 'none'
+          disGssGrdP.style.display = 'none'
+          doubleWrapper.style.backgroundImage = "url('./Assets/1280px-Uss_iowa_bb-61_pr.jpg')"
+          doubleWrapper.style.backgroundSize = '750px 600px'
+          doubleWrapper.style.borderRadius = '20px'
+          doubleWrapper.style.border = '3px solid navy'
+          doubleWrapper.innerHTML = "VICTORY! We have destroyed their fleet! Your score: "+ scoreP +". You took " + pGuesses +" guesses to win."
+          doubleWrapper.style.fontSize = '54px'
+          doubleWrapper.style.textShadow = '2px 2px lightblue'
+          doubleWrapper.style.flexDirection = 'row'
+          doubleWrapper.style.textAlign = 'center'
+          doubleWrapper.style.alignItems = 'center'
+          doubleWrapper.style.width = '700px'
+          doubleWrapper.style.height = '600px'
         } else {
           computerGuess()
         }
       } else {
-        console.log(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
+        window.alert(`We hit their ${guessClass.slice(0,-1)} Admiral! Excellent shot!`)
         computerGuess()
       }
     } else if (eT.classList.contains('hit')){
-      console.log('We already hit there. Choose new coordinates Admiral...')
+      window.alert('We already hit there. Choose new coordinates Admiral...')
     } else if (!eT.classList.contains('miss') && !eT.classList.contains('hit')){
       console.log('We missed Admiral!')
       eT.classList.add('miss')
       computerGuess()
       // EXTRA GUESSES TO DO AI BUG FIXIN'
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
-      // computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
+      computerGuess()
       
     } else if (eT.classList.contains('miss')){
       console.log('We already missed there. Choose new coordinates Admiral...')
@@ -1005,7 +1030,6 @@ function init() {
   // ~~~~~   GAME PLAY SECTION END   ~~~~~~
 
   // ~~~~~   EVENT LISTENERS   ~~~~~~
-
   shipSelector.addEventListener('click', rotateSelection)
   rotateB.addEventListener('click', rotateButton)
   startB.addEventListener('click', startButton)
