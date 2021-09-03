@@ -210,7 +210,7 @@ function init() {
 
   // GRID BASED CONSTANTS
   const computerBoxes = document.querySelectorAll('.grid div')
-
+  lastKey = 0
   // ~~~~~~~~   SHIP PLACEMENT AND VALIDATION SECTION ( INITIALIZATION / STRATEGY / PLACEMENT PHASE)   ~~~~~~~~
 
   function getRandomInt(max) {
@@ -228,14 +228,45 @@ function init() {
 
   function unplaceShip(ship){
     const shipSquares = document.querySelectorAll(`.${ship.classS}`)
-    shipSquares.forEach(sqr => sqr.classList.remove(ship.classS))
+    // console.log(shipSquares, 'divs assigned classes for this ship')
+    shipSquares.forEach(sqr => sqr.classList.contains(ship.classS) ? sqr.classList.remove(ship.classS) : console.log('swing and a miss, here was a problem before'))
+    // console.log((`#${ship.startLocation} img`))
     let imgRem = document.querySelector(`#${ship.startLocation} img`)
-    imgRem.remove()
+    if (imgRem != null){
+      imgRem.remove()
+    }
+  }
+
+  function unplaceShipMove(ship, lastKey){
+    let classRelevant = selectedShip.classS
+    const shipSquares = document.querySelectorAll(`.${ship.classS}`)
+    console.log(shipSquares, 'divs assigned classes for this ship')
+    shipSquares.forEach(sqr => sqr.classList.contains(ship.classS) ? sqr.classList.remove(ship.classS) : console.log('swing and a miss, here was a problem before'))
+    let locW= 'gridP' + parseShipL(selectedShip, -1)
+    let locE = 'gridP' + parseShipL(selectedShip, 1)
+    let locN = 'gridP' + parseShipL(selectedShip, -10)
+    let locS = 'gridP' + parseShipL(selectedShip, 10)
+    let arrayThingV = [locN, locS]
+    let arrayThingH = [locE, locW]
+    if (lastKey === 37 || lastKey === 39){
+      array1or2 = arrayThingH
+    } else {
+      array1or2 = arrayThingV
+    }
+    console.log(arrayThingH, arrayThingV, 'this is inside the unplaceshipmove')
+    console.log(selectedShip.startLocation)
+    for (let i=0;i<array1or2.length;i++){
+      let imgRem = document.querySelector(`#${array1or2[i]} img`)
+      console.log(classRelevant)
+      console.log(document.getElementById(`#${ship.startLocation}`).className)
+      if (document.getElementById(`#${ship.startLocation}`).classList.contains(classRelevant) && imgRem != null){
+        imgRem.remove()
+      }
+
+    }
   }
 
   function placeShip(ship, letter){
-    console.log('am i getting here off key presses')
-
     if (ship.orientation === 'vertical'){
       //vertical image goes here
       let star = ship.startLocation
@@ -283,6 +314,7 @@ function init() {
   }
 
   function validateSpawn(ship, letter){
+    
     if (ship.orientation === 'vertical'){
       let truArray = []
       // console.log(ship.classS, ship.orientation, ship.startLocation, 'from vertical validate spawn')
@@ -455,51 +487,51 @@ function init() {
       const left = 37
       const up = 38
       const down = 40
-
+      let lastKey = 0
       // throw in a space bar id number here and then put space bar causes a rotation?
-      // have to mess with the code validation AKA every to the right of the &&
-      // I DONT HAVE ANY WIDTH STUFF ANYWHERE
-      //I think validate spawn is all the validation I need, and I can ignore this stuff. But I will save it in case
-      // it is very good at validating if you are 1 square wide, but less so if you're a range of squares wide.
-      // *** DECPRECATED BORROWED CODE FROM CLASS CAT GRID MOVEMENT EXAMPLE***
-      // if (key === right && currentPosition % width !== width - 1){
-      //   selectedShip.startLocation = parseShipL(selectedShip, 1)
-      // } else if (key === left && currentPosition % width !== 0){
-      //   selectedShip.startLocation = parseShipL(selectedShip, -1)
-      // } else if (key === up && currentPosition >= width){
-      //   selectedShip.startLocation = parseShipL(selectedShip, -10)
-      // } else if (key === down && currentPosition + width <= cellCount - 1){
-      //   selectedShip.startLocation = parseShipL(selectedShip, 10)
-      // } else {
-      //   window.alert('INVALID KEY: use the arrow keys!')
-      // }
 
-      console.log(selectedShip.startLocation, 'vanilla start location reference') 
-      // let shipNumba = Number(ship.startLocation.slice(-2))
+      let backUpStart = selectedShip.startLocation
       if (key === right){
-        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 1)
-        console.log(selectedShip.startLocation, 'should be one more than the last thing consoled')
+        if(parseShipL(selectedShip, 1)%10 === 0){
+          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 1), "location can't be moved into")
+        } else{
+          selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 1)
+          lastKey = right
+        }
       } else if (key === left){
-        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
-        console.log(selectedShip.startLocation, 'should be one less than the last thing consoled')
+        if(Number(selectedShip.startLocation.slice(-1)) === 0){
+          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, -1), "location can't be moved into")
+        } else if (Number(selectedShip.startLocation.slice(-1)) > 0){
+          selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -1)
+          lastKey = left
+        } else {
+          console.log('reread that programming')
+        }
       } else if (key === up){
-        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
-        console.log(selectedShip.startLocation, 'should be 10 less than the last thing consoled')
+        if(parseShipL(selectedShip, -10) < 0){
+          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, -10), "location can't be moved into")
+        } else{
+          selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, -10)
+          lastKey = up
+        }
       } else if (key === down){
-        selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
-        console.log(selectedShip.startLocation, 'should be 10 higher than the last thing consoled')
+        if(parseShipL(selectedShip, 10) >= 100){
+          console.log('The ship cannot move there Admiral!' + 'gridP' + parseShipL(selectedShip, 10), "location can't be moved into")
+        } else{
+          selectedShip.startLocation = 'gridP' + parseShipL(selectedShip, 10)
+          lastKey = down
+        }
       } else {
         window.alert('INVALID KEY: use the arrow keys!')
       }
-      // spawn new boat off new location
-      //may have to dig into validate spawn here
+      unplaceShipMove(selectedShip, lastKey)
       if (validateSpawn(selectedShip, 'P').includes(true)) { //this will only include true, if there's one of several obstacles
         console.log('The ship cannot move there Admiral!' + selectedShip.startLocation, "location can't be moved into")
+        selectedShip.startLocation = backUpStart
+        placeShip(selectedShip, 'P')
       } else { // if true was not return, then you're all clear to move to the new updated starting location
-        
-        // supa risky forcin' it just to see!
-        // unplaceShip(selectedShip) //unplace is working fine
-        placeShip(selectedShip, 'P') // something is failing here
+        placeShip(selectedShip, 'P')
+
       }
     }
   }
