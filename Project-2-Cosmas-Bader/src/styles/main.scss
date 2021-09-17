@@ -1,0 +1,43 @@
+.card {
+  height: 100%;
+  .card-image {
+    flex:1;
+    .image {
+      object-fit: cover;
+    }
+	}
+}
+
+body {
+  background-color: rgb(29, 29, 29);
+}
+.bg-Aatrox {
+  background-image: url("http://ddragon.leagueoflegends.com/cdn/11.18.1/img/champion/Aatrox.png");
+}
+
+// ~~~~~~ ALL
+
+a{
+  text-decoration: none;
+}
+
+.tag {
+  border: 1px solid rgba(0,0,0,.4);
+  padding: 4px;
+  border-radius: 3px;
+  margin-right: 5px;
+  background-color: #c39837;
+  color: black;
+  font-weight: bold;
+}
+
+// ~~~~~~ HOME 
+
+
+
+// ~~~~~~ CHAMPIONS
+
+
+
+
+// ~~~~~~ CHAMPION
